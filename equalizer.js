@@ -14,18 +14,18 @@ client.on("message", message =>
 		{
 			if (message.content.substring(0,1) == '!')
 			{
-				var firstSpace = message.content.indexOf(' ');
-				
-				var command = (firstSpace >= 0) ? message.content.substring(1, firstSpace) : message.content.substring(1);
+				var command = message.content.split(" ");
 
-				switch(command)
+				command[0] = command[0].substring(1);
+
+				switch(command[0])
 				{
 					case 'ping':
 						message.channel.sendMessage("Pong!");
 						break;
 
 					default:
-						message.channel.sendMessage("You just tried to run the " + command + " command, didn't you?");
+						message.channel.sendMessage("You just tried to run the " + command[0] + " command, didn't you?");
 				}
 			}
 		}
