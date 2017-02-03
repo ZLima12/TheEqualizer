@@ -24,6 +24,10 @@ client.on("message", message =>
 						message.channel.sendMessage("Pong!");
 						break;
 
+					case 'test':
+						message.channel.sendMessage("Test received!");
+						break;
+
 					default:
 						message.channel.sendMessage("You just tried to run the " + command[0] + " command, didn't you?");
 				}
