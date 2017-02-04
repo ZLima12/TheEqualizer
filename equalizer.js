@@ -176,6 +176,11 @@ client.on("message", message =>
 							break;
 						}
 
+						if (message.member.voiceChannel == null)
+						{
+							message.reply("You must be in a voice channel to start this vote.");
+							break;
+						}
 						var vc = message.member.voiceChannel;
 						
 						var memberArray = vc.members.array();
@@ -219,6 +224,12 @@ client.on("message", message =>
 						if (!currentVote.isClean())
 						{
 							message.channel.sendMessage("There is already a vote going on.");
+							break;
+						}
+
+						if (message.member.voiceChannel == null)
+						{
+							message.reply("You must be in a voice channel to start this vote.");
 							break;
 						}
 
