@@ -31,6 +31,8 @@ client.on("message", message =>
 							client.destroy();
 							process.exit();
 						}
+						
+						break;
 
 					default:
 						message.channel.sendMessage("What does \"" + command[0] + "\" mean?");
