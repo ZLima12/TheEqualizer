@@ -208,7 +208,7 @@ client.on("message", message =>
 								
 								function()
 								{
-									return channel.members.array().length;
+									return channel.members.array().length * 2 / 3;
 								}
 						    );
 
@@ -260,7 +260,7 @@ client.on("message", message =>
 								
 								function()
 								{
-									return channel.members.array().length;
+									return channel.members.array().length * 2 / 3;
 								}
 						    );
 
