@@ -61,6 +61,7 @@ function startVote(message, desc, action, valid, votesNeeded)
 		currentVote.votedMembers = [message.member];
 		
 		message.channel.sendMessage("A vote has been started to " + desc + ".");
+		message.channel.sendMessage(currentVote.votes + "/" + currentVote.votesNeeded() + " votes.");
 		checkVote();
 	}
 }
