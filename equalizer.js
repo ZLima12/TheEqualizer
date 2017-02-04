@@ -102,7 +102,7 @@ client.on("voiceStateUpdate", () =>
 
 client.on("message", message =>
 		{
-			if (message.content.substring(0,1) == '!')
+			if (message.content.substring(0,1) == '=')
 			{
 				var command = message.content.split(" ");
 
