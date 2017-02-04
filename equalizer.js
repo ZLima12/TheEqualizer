@@ -24,6 +24,14 @@ client.on("message", message =>
 						message.channel.sendMessage("Pong!");
 						break;
 
+					case 'destroy':
+						if (message.author.username == "ZLima12")
+						{
+							message.channel.sendMessage("Shutting down...");
+							client.destroy();
+							process.exit();
+						}
+
 					default:
 						message.channel.sendMessage("What does \"" + command[0] + "\" mean?");
 				}
