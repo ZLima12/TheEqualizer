@@ -29,7 +29,7 @@ client.on("message", message =>
 						break;
 
 					default:
-						message.channel.sendMessage("You just tried to run the " + command[0] + " command, didn't you?");
+						message.channel.sendMessage("What does \"" + command[0] + "\" mean?");
 				}
 			}
 		}
