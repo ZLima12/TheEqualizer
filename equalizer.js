@@ -41,12 +41,12 @@ function startVote(message, desc, action, valid, votesNeeded)
 {
 	if (!currentVote.isClean())
 	{
-		message.channel.sendMessage("A vote to " + currentVote.desc + " is currently underway. ");
+		message.reply("A vote to " + currentVote.desc + " is currently underway. ");
 	}
 
 	else if (message.channel.type != "text")
 	{
-		message.channel.sendMessage("I'm not quite sure what to do in this context...");
+		message.reply("I'm not quite sure what to do in this context...");
 		return;
 	}
 
@@ -112,7 +112,7 @@ client.on("message", message =>
 				switch(command[0])
 				{
 					case 'ping':
-						message.channel.sendMessage("Pong!");
+						message.reply("Pong!");
 						break;
 
 					case 'destroy':
@@ -128,7 +128,7 @@ client.on("message", message =>
 					case 'vote':
 						if (currentVote.isClean())
 						{
-							message.channel.sendMessage("There is currently no vote being run.");
+							message.reply("There is currently no vote being run.");
 						}
 
 						else
@@ -177,7 +177,7 @@ client.on("message", message =>
 
 						if (!currentVote.isClean())
 						{
-							message.channel.sendMessage("There is already a vote going on.");
+							message.reply("There is already a vote underway.");
 							break;
 						}
 
@@ -228,7 +228,7 @@ client.on("message", message =>
 
 						if (!currentVote.isClean())
 						{
-							message.channel.sendMessage("There is already a vote going on.");
+							message.reply("There is already a vote underway.");
 							break;
 						}
 
@@ -291,7 +291,7 @@ client.on("message", message =>
 						break;
 
 					default:
-						message.channel.sendMessage("What does \"" + command[0] + "\" mean?");
+						message.reply("What does \"" + command[0] + "\" mean?");
 				}
 			}
 		}
