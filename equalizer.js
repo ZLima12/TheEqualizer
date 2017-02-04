@@ -133,14 +133,18 @@ client.on("message", message =>
 
 						else
 						{
-							for (var member in currentVote.votedMembers)
+							var prevVoted = false;
+							for (var i = 0; i < currentVote.votedMembers.length; i++)
 							{
+								var member = currentVote.votedMembers[i];
 								if (member.id == message.member.id)
 								{
 									message.reply("You have already voted.");
-									break;
+									prevVoted = true;
 								}
 							}
+
+							if (prevVoted) break;
 
 							if (command.length != 2)
 							{
