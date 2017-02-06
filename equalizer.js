@@ -6,28 +6,9 @@ const client = new Discord.Client();
 
 const biasAdmin = false;
 
-var currentVote =
+class Vote
 {
-	action: null,
-	message: null,
-	stillValid: null,
-	votesNeeded: null,
-	votes: null,
-	desc: null,
-	votedMembers: null,
-
-	isClean: function()
-	{
-		return this.action == null &&
-			this.message == null &&
-			this.stillValid == null &&
-			this.votesNeeded == null &&
-			this.desc == null &&
-			this.votedMembers == null &&
-			this.votes == null;
-	},
-
-	clearVars: function()
+	constructor()
 	{
 		this.action = null;
 		this.message = null;
@@ -37,57 +18,81 @@ var currentVote =
 		this.desc = null;
 		this.votedMembers = null;
 	}
-}
 
-function startVote(message, desc, action, valid, votesNeeded)
-{
-	if (!currentVote.isClean())
+	isClean()
 	{
-		message.reply("A vote to " + currentVote.desc + " is currently underway. ");
+		return this.action == null &&
+			this.message == null &&
+			this.stillValid == null &&
+			this.votesNeeded == null &&
+			this.desc == null &&
+			this.votedMembers == null &&
+			this.votes == null;
 	}
 
-	else if (message.channel.type != "text")
+	clearVars()
 	{
-		message.reply("I'm not quite sure what to do in this context...");
-		return;
+		this.action = null;
+		this.message = null;
+		this.stillValid = null;
+		this.votesNeeded = null;
+		this.votes = null;
+		this.desc = null;
+		this.votedMembers = null;
 	}
 
-	else
+	static startVote(message, desc, action, valid, votesNeeded)
 	{
-		currentVote.action = action;
-		currentVote.message = message;
-		currentVote.stillValid = valid;
-		currentVote.votesNeeded = votesNeeded;
-		currentVote.votes = 1;
-		currentVote.desc = desc;
-		currentVote.votedMembers = [message.member];
-		
-		message.channel.sendMessage("A vote has been started to " + desc + ".");
-		message.channel.sendMessage(currentVote.votes + "/" + currentVote.votesNeeded() + " votes.");
-		checkVote();
-	}
-}
-
-function checkVote()
-{
-	if (!currentVote.isClean())
-	{
-		if (!currentVote.stillValid())
+		if (!currentVote.isClean())
 		{
-			currentVote.message.channel.sendMessage("The vote has been invalidated.");
-			currentVote.clearVars();
+			message.reply("A vote to " + currentVote.desc + " is currently underway. ");
+		}
+	
+		else if (message.channel.type != "text")
+		{
+			message.reply("I'm not quite sure what to do in this context...");
 			return;
 		}
-
-		if (currentVote.votes >= currentVote.votesNeeded())
+	
+		else
 		{
-			currentVote.message.channel.sendMessage("The vote to " + currentVote.desc + " has concluded successfully!");
-			currentVote.action();
-			currentVote.clearVars();
-			return;
+			currentVote.action = action;
+			currentVote.message = message;
+			currentVote.stillValid = valid;
+			currentVote.votesNeeded = votesNeeded;
+			currentVote.votes = 1;
+			currentVote.desc = desc;
+			currentVote.votedMembers = [message.member];
+			
+			message.channel.sendMessage("A vote has been started to " + desc + ".");
+			message.channel.sendMessage(currentVote.votes + "/" + currentVote.votesNeeded() + " votes.");
+			Vote.checkVote();
+		}
+	}
+
+	static checkVote()
+	{
+		if (!currentVote.isClean())
+		{
+			if (!currentVote.stillValid())
+			{
+				currentVote.message.channel.sendMessage("The vote has been invalidated.");
+				currentVote.clearVars();
+				return;
+			}
+	
+			if (currentVote.votes >= currentVote.votesNeeded())
+			{
+				currentVote.message.channel.sendMessage("The vote to " + currentVote.desc + " has concluded successfully!");
+				currentVote.action();
+				currentVote.clearVars();
+				return;
+			}
 		}
 	}
 }
+
+var currentVote = new Vote();
 
 client.on("ready", () =>
 		{
@@ -97,7 +102,7 @@ client.on("ready", () =>
 
 client.on("voiceStateUpdate", () =>
 		{
-			checkVote();
+			Vote.checkVote();
 		}
 	 );
 
@@ -227,7 +232,7 @@ client.on("message", message =>
 						var channel = target.voiceChannel;
 						var channelID = target.voiceChannelID;
 
-						startVote(message, "mute " + command[1], function() { target.setMute(true); }, function()
+						Vote.startVote(message, "mute " + command[1], function() { target.setMute(true); }, function()
 								{
 									return target.voiceChannelID == channelID;
 								},
@@ -300,7 +305,7 @@ client.on("message", message =>
 						var channel = target.voiceChannel;
 						var channelID = target.voiceChannelID;
 
-						startVote(message, "unmute " + command[1], function() { target.setMute(false); }, function()
+						Vote.startVote(message, "unmute " + command[1], function() { target.setMute(false); }, function()
 								{
 									return target.voiceChannelID == channelID;
 								},
