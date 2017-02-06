@@ -4,6 +4,8 @@ const Auth = require('./auth');
 
 const client = new Discord.Client();
 
+const biasAdmin = false;
+
 var currentVote =
 {
 	action: null,
@@ -76,8 +78,6 @@ function checkVote()
 			currentVote.clearVars();
 			return;
 		}
-
-
 
 		if (currentVote.votes >= currentVote.votesNeeded())
 		{
@@ -171,7 +171,7 @@ client.on("message", message =>
 					case 'mute':
 						if (command.length != 2)
 						{
-							message.reply("Invalid usage. `mute SomeUser#1234`.");
+							message.reply("Invalid usage. `mute @SomeUser`.");
 							break;
 						}
 
@@ -191,15 +191,36 @@ client.on("message", message =>
 						var memberArray = vc.members.array();
 						
 						var target = null;
+
+						var quit = false;
+
 						for (var member of memberArray)
 						{
-							if (member.user.username + "#" + member.user.discriminator == command[1])
+							if ("<@" + member.user.id + ">" == command[1])
 								target = member;
+
+							else if ("<@!" + member.user.id + ">" == command[1])
+							{
+								switch (biasAdmin)
+								{
+									case true:
+										message.reply("No can do, all praise " + command[1] + ".");
+										quit = true;
+										break;
+									
+									case false:
+										target = member;
+										break;
+								}
+							}
 						}
+
+						if (quit) break;
 
 						if (target == null)
 						{
 							message.reply("No user found by " + command[1] + ".");
+
 							break;
 						}
 						
@@ -222,7 +243,7 @@ client.on("message", message =>
 					case 'unmute':
 						if (command.length != 2)
 						{
-							message.reply("Invalid usage. `unmute SomeUser#1234`.");
+							message.reply("Invalid usage. `unmute @SomeUser`.");
 							break;
 						}
 
@@ -243,11 +264,32 @@ client.on("message", message =>
 						var memberArray = vc.members.array();
 						
 						var target = null;
+
+						var quit = false;
+
 						for (var member of memberArray)
 						{
-							if (member.user.username + "#" + member.user.discriminator == command[1])
+							if ("<@" + member.user.id + ">" == command[1])
 								target = member;
+
+
+							else if ("<@!" + member.user.id + ">" == command[1])
+							{
+								switch (biasAdmin)
+								{
+									case true:
+										message.reply("No can do, all praise " + command[1] + ".");
+										quit = true;
+										break;
+									
+									case false:
+										target = member;
+										break;
+								}
+							}
 						}
+
+						if (quit) break;
 
 						if (target == null)
 						{
