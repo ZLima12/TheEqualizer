@@ -100,6 +100,89 @@ class VoteConductor
 			}
 		}
 	}
+
+	static standardVote(message, desc, action, fraction)
+	{
+		var command = messageToArray(message);
+
+		if (command.length != 2)
+		{
+			message.reply("Invalid usage. `mute @SomeUser`.");
+			return;
+		}
+
+		if (currentVote != null && currentVote.underway())
+		{
+			message.reply("There is already a vote underway.");
+			return;
+		}
+
+		if (message.member.voiceChannel == null)
+		{
+			message.reply("You must be in a voice channel to start this vote.");
+			return;
+		}
+		var vc = message.member.voiceChannel;
+		
+		var memberArray = vc.members.array();
+		
+		var target = null;
+
+		for (var member of memberArray)
+		{
+			if ("<@" + member.user.id + ">" == command[1])
+				target = member;
+
+			else if ("<@!" + member.user.id + ">" == command[1])
+			{
+				switch (biasAdmin)
+				{
+					case true:
+						message.reply("No can do, all praise " + command[1] + ".");
+						return;
+						break;
+					
+					case false:
+						target = member;
+						break;
+				}
+			}
+		}
+
+		if (target == null)
+		{
+			message.reply("No user found by " + command[1] + ".");
+
+			return;
+		}
+		
+		var channel = target.voiceChannel;
+		var channelID = target.voiceChannelID;
+
+		currentVote = new VoteConductor
+			(
+				message,
+				desc + " " + command[1],
+				
+				function()
+				{ action(target); },
+				
+				function()
+				{ return target.voiceChannelID == channelID; },
+				
+				function()
+				{ return Math.floor(channel.members.array().length * fraction); }
+			);
+
+		currentVote.start();
+	}
+}
+
+function messageToArray(message)
+{
+	var arr = message.content.split(" ");
+	arr[0] = arr[0].substring(1);
+	return arr;
 }
 
 var currentVote = null;
@@ -193,162 +276,12 @@ client.on("message", message =>
 						break;
 
 					case 'mute':
-						if (command.length != 2)
-						{
-							message.reply("Invalid usage. `mute @SomeUser`.");
-							break;
-						}
-
-						if (currentVote != null && currentVote.underway())
-						{
-							message.reply("There is already a vote underway.");
-							break;
-						}
-
-						if (message.member.voiceChannel == null)
-						{
-							message.reply("You must be in a voice channel to start this vote.");
-							break;
-						}
-						var vc = message.member.voiceChannel;
-						
-						var memberArray = vc.members.array();
-						
-						var target = null;
-
-						var quit = false;
-
-						for (var member of memberArray)
-						{
-							if ("<@" + member.user.id + ">" == command[1])
-								target = member;
-
-							else if ("<@!" + member.user.id + ">" == command[1])
-							{
-								switch (biasAdmin)
-								{
-									case true:
-										message.reply("No can do, all praise " + command[1] + ".");
-										quit = true;
-										break;
-									
-									case false:
-										target = member;
-										break;
-								}
-							}
-						}
-
-						if (quit) break;
-
-						if (target == null)
-						{
-							message.reply("No user found by " + command[1] + ".");
-
-							break;
-						}
-						
-						var channel = target.voiceChannel;
-						var channelID = target.voiceChannelID;
-
-						currentVote = new VoteConductor(
-								message,
-								"mute " + command[1],
-								function() { target.setMute(true); },
-								
-								function()
-								{
-									return target.voiceChannelID == channelID;
-								},
-								
-								function()
-								{
-									return Math.floor(channel.members.array().length * 2 / 3);
-								}
-						    );
-
-						currentVote.start();
+						VoteConductor.standardVote(message, "mute", function(member) { member.setMute(true); }, (2 / 3));
 
 						break;
 
 					case 'unmute':
-						if (command.length != 2)
-						{
-							message.reply("Invalid usage. `unmute @SomeUser`.");
-							break;
-						}
-
-						if (currentVote != null && currentVote.underway())
-						{
-							message.reply("There is already a vote underway.");
-							break;
-						}
-
-						if (message.member.voiceChannel == null)
-						{
-							message.reply("You must be in a voice channel to start this vote.");
-							break;
-						}
-
-						var vc = message.member.voiceChannel;
-						
-						var memberArray = vc.members.array();
-						
-						var target = null;
-
-						var quit = false;
-
-						for (var member of memberArray)
-						{
-							if ("<@" + member.user.id + ">" == command[1])
-								target = member;
-
-
-							else if ("<@!" + member.user.id + ">" == command[1])
-							{
-								switch (biasAdmin)
-								{
-									case true:
-										message.reply("No can do, all praise " + command[1] + ".");
-										quit = true;
-										break;
-									
-									case false:
-										target = member;
-										break;
-								}
-							}
-						}
-
-						if (quit) break;
-
-						if (target == null)
-						{
-							message.reply("No user found by " + command[1] + ".");
-							break;
-						}
-						
-						var channel = target.voiceChannel;
-						var channelID = target.voiceChannelID;
-
-						currentVote = new VoteConductor(
-								message,
-								"unmute " + command[1],
-								function() { target.setMute(false); },
-								
-								function()
-								{
-									return target.voiceChannelID == channelID;
-								},
-								
-								function()
-								{
-									return Math.floor(channel.members.array().length * 2 / 3);
-								}
-						    );
-
-						currentVote.start();
-
+						VoteConductor.standardVote(message, "unmute", function(member) {member.setMute(false); }, (2 / 3));
 						break;
 
 					case 'cancel':
