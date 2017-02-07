@@ -8,42 +8,57 @@ const biasAdmin = false;
 
 class Vote
 {
-	constructor()
+	constructor(member, upvote)
 	{
-		this.action = null;
-		this.message = null;
-		this.stillValid = null;
-		this.votesNeeded = null;
-		this.votes = null;
-		this.desc = null;
-		this.votedMembers = null;
+		this.member = member;
+		this.modifier = (upvote) ? 1 : -1;
+	}
+}
+
+class VoteConductor
+{
+	constructor(message, desc, action, valid, votesNeeded)
+	{
+		this.message = message;
+		this.uid = message.author.id;
+		this.desc = desc;
+		this.action = action;
+		this.stillValid = valid;
+		this.votesNeeded = votesNeeded;
+		this.votes = [];
 	}
 
-	isClean()
+	voteCount()
 	{
-		return this.action == null &&
-			this.message == null &&
-			this.stillValid == null &&
-			this.votesNeeded == null &&
-			this.desc == null &&
-			this.votedMembers == null &&
-			this.votes == null;
+		var count = 0;
+		
+		for (var i = 0; i < this.votes.length; i++)
+			count += this.votes[i].modifier;
+
+
+		return count;
 	}
 
-	clearVars()
+	underway()
 	{
-		this.action = null;
-		this.message = null;
-		this.stillValid = null;
-		this.votesNeeded = null;
-		this.votes = null;
-		this.desc = null;
-		this.votedMembers = null;
+		return (this.votes.length > 0);
 	}
 
-	static startVote(message, desc, action, valid, votesNeeded)
+	sendMessage(message)
 	{
-		if (!currentVote.isClean())
+		this.message.channel.sendMessage(message);
+	}
+
+	reply(message)
+	{
+		this.message.reply(message);
+	}
+
+	start()
+	{
+		var message = this.message;
+
+		if (currentVote != null && currentVote.underway())
 		{
 			message.reply("A vote to " + currentVote.desc + " is currently underway. ");
 		}
@@ -56,43 +71,38 @@ class Vote
 	
 		else
 		{
-			currentVote.action = action;
-			currentVote.message = message;
-			currentVote.stillValid = valid;
-			currentVote.votesNeeded = votesNeeded;
-			currentVote.votes = 1;
-			currentVote.desc = desc;
-			currentVote.votedMembers = [message.member];
+			this.votes.push(new Vote(message.member, true));
+			currentVote = this;
 			
-			message.channel.sendMessage("A vote has been started to " + desc + ".");
-			message.channel.sendMessage(currentVote.votes + "/" + currentVote.votesNeeded() + " votes.");
-			Vote.checkVote();
+			this.sendMessage("A vote has been started to " + this.desc + ".");
+			this.sendMessage(currentVote.voteCount() + "/" + currentVote.votesNeeded() + " votes.");
+			VoteConductor.checkVote();
 		}
 	}
 
 	static checkVote()
 	{
-		if (!currentVote.isClean())
+		if (currentVote != null && currentVote.underway())
 		{
 			if (!currentVote.stillValid())
 			{
-				currentVote.message.channel.sendMessage("The vote has been invalidated.");
-				currentVote.clearVars();
+				currentVote.sendMessage("The vote has been invalidated.");
+				currentVote = null;
 				return;
 			}
 	
-			if (currentVote.votes >= currentVote.votesNeeded())
+			if (currentVote.voteCount() >= currentVote.votesNeeded())
 			{
-				currentVote.message.channel.sendMessage("The vote to " + currentVote.desc + " has concluded successfully!");
+				currentVote.sendMessage("The vote to " + currentVote.desc + " has concluded successfully!");
 				currentVote.action();
-				currentVote.clearVars();
+				currentVote = null;
 				return;
 			}
 		}
 	}
 }
 
-var currentVote = new Vote();
+var currentVote = null;
 
 client.on("ready", () =>
 		{
@@ -102,7 +112,7 @@ client.on("ready", () =>
 
 client.on("voiceStateUpdate", () =>
 		{
-			Vote.checkVote();
+			VoteConductor.checkVote();
 		}
 	 );
 
@@ -121,7 +131,7 @@ client.on("message", message =>
 						break;
 
 					case 'destroy':
-						if (message.author.username == "ZLima12")
+						if (message.author.username  == "ZLima12")
 						{
 							message.channel.sendMessage("Shutting down...");
 							client.destroy();
@@ -131,7 +141,7 @@ client.on("message", message =>
 						break;
 
 					case 'vote':
-						if (currentVote.isClean())
+						if (currentVote == null || !currentVote.underway())
 						{
 							message.reply("There is currently no vote being run.");
 						}
@@ -139,9 +149,9 @@ client.on("message", message =>
 						else
 						{
 							var prevVoted = false;
-							for (var i = 0; i < currentVote.votedMembers.length; i++)
+							for (var i = 0; i < currentVote.votes.length; i++)
 							{
-								var member = currentVote.votedMembers[i];
+								var member = currentVote.votes[i];
 								if (member.id == message.member.id)
 								{
 									message.reply("You have already voted.");
@@ -163,12 +173,11 @@ client.on("message", message =>
 								break;
 							}
 
-							currentVote.votes += (command[1].toLowerCase() == "yes") ? 1 : -1;
-							currentVote.votedMembers.push(message.member);
+							currentVote.votes.push(new Vote(message.member, (command[1].toLowerCase() == "yes")));
 							
-							message.channel.sendMessage(currentVote.votes + "/" + currentVote.votesNeeded() + " votes.");
+							message.channel.sendMessage(currentVote.voteCount() + "/" + currentVote.votesNeeded() + " votes.");
 							
-							checkVote();
+							VoteConductor.checkVote();
 						}
 
 						break;
@@ -180,7 +189,7 @@ client.on("message", message =>
 							break;
 						}
 
-						if (!currentVote.isClean())
+						if (currentVote != null && currentVote.underway())
 						{
 							message.reply("There is already a vote underway.");
 							break;
@@ -232,7 +241,12 @@ client.on("message", message =>
 						var channel = target.voiceChannel;
 						var channelID = target.voiceChannelID;
 
-						Vote.startVote(message, "mute " + command[1], function() { target.setMute(true); }, function()
+						currentVote = new VoteConductor(
+								message,
+								"mute " + command[1],
+								function() { target.setMute(true); },
+								
+								function()
 								{
 									return target.voiceChannelID == channelID;
 								},
@@ -242,6 +256,8 @@ client.on("message", message =>
 									return Math.floor(channel.members.array().length * 2 / 3);
 								}
 						    );
+
+						currentVote.start();
 
 						break;
 
@@ -252,7 +268,7 @@ client.on("message", message =>
 							break;
 						}
 
-						if (!currentVote.isClean())
+						if (currentVote != null && currentVote.underway())
 						{
 							message.reply("There is already a vote underway.");
 							break;
@@ -305,7 +321,12 @@ client.on("message", message =>
 						var channel = target.voiceChannel;
 						var channelID = target.voiceChannelID;
 
-						Vote.startVote(message, "unmute " + command[1], function() { target.setMute(false); }, function()
+						currentVote = new VoteConductor(
+								message,
+								"unmute " + command[1],
+								function() { target.setMute(false); },
+								
+								function()
 								{
 									return target.voiceChannelID == channelID;
 								},
@@ -316,24 +337,25 @@ client.on("message", message =>
 								}
 						    );
 
+						currentVote.start();
+
 						break;
 
 					case 'cancel':
-						if (currentVote.isClean())
+						if (currentVote == null || !currentVote.underway())
 						{
 							message.reply("There is currently no vote being run.");
 							break;
 						}
 
-						if (message.author.id == currentVote.message.author.id)
+						if (message.author.id == currentVote.uid)
 						{
-							currentVote.message.channel.sendMessage("The vote to " + currentVote.desc + " has been canceled.");
-							currentVote.clearVars();
+							currentVote.sendMessage("The vote to " + currentVote.desc + " has been canceled.");
+							currentVote = null;
 							break;
 						}
 
 						message.reply("No can do. Only " + currentVote.message.author.username + " can cancel the current vote.");
-
 
 						break;
 
