@@ -140,6 +140,16 @@ client.on("message", message =>
 						
 						break;
 
+					case 'source':
+						if (command.length > 1)
+							message.reply("If you were looking for my souce code, you can find it here:");
+						else
+							message.reply("My source code is located here:");
+
+						message.channel.sendMessage("`https://github.com/ZLima12/TheEqualizer`");
+
+						break;
+
 					case 'vote':
 						if (currentVote == null || !currentVote.underway())
 						{
