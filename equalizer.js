@@ -153,13 +153,13 @@ client.on("message", message =>
 
 							if (command.length != 2)
 							{
-								message.reply("Invalid usage of vote. Either `!vote yes` or `!vote no`.");
+								message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
 								break;
 							}
 
 							if (command[1].toLowerCase() != "yes" && command[1].toLowerCase() != "no")
 							{
-								message.reply("Invalid usage of vote. Either `!vote yes` or `!vote no`.");
+								message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
 								break;
 							}
 
