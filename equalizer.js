@@ -1,6 +1,8 @@
-const Discord = require('discord.js');
+/*jshint esversion: 6 */
 
-const Auth = require('./auth');
+const Discord = require("discord.js");
+
+const Auth = require("./auth");
 
 const client = new Discord.Client();
 
@@ -58,7 +60,7 @@ class VoteConductor
 	{
 		var message = this.message;
 
-		if (currentVote != null && currentVote.underway())
+		if (currentVote !== null && currentVote.underway())
 		{
 			message.reply("A vote to " + currentVote.desc + " is currently underway. ");
 		}
@@ -74,15 +76,15 @@ class VoteConductor
 			this.votes.push(new Vote(message.member, true));
 			currentVote = this;
 			
-			this.sendMessage("A vote has been started to " + this.desc + ".");
-			this.sendMessage(currentVote.voteCount() + "/" + currentVote.votesNeeded() + " votes.");
+			this.sendMessage("A vote has been started to " + this.desc + '.');
+			this.sendMessage(currentVote.voteCount() + '/' + currentVote.votesNeeded() + " votes.");
 			VoteConductor.checkVote();
 		}
 	}
 
 	static checkVote()
 	{
-		if (currentVote != null && currentVote.underway())
+		if (currentVote !== null && currentVote.underway())
 		{
 			if (!currentVote.stillValid())
 			{
@@ -111,13 +113,13 @@ class VoteConductor
 			return;
 		}
 
-		if (currentVote != null && currentVote.underway())
+		if (currentVote !== null && currentVote.underway())
 		{
 			message.reply("There is already a vote underway.");
 			return;
 		}
 
-		if (message.member.voiceChannel == null)
+		if (message.member.voiceChannel === null)
 		{
 			message.reply("You must be in a voice channel to start this vote.");
 			return;
@@ -130,17 +132,16 @@ class VoteConductor
 
 		for (var member of memberArray)
 		{
-			if ("<@" + member.user.id + ">" == command[1])
+			if ("<@" + member.user.id + '>' == command[1])
 				target = member;
 
-			else if ("<@!" + member.user.id + ">" == command[1])
+			else if ("<@!" + member.user.id + '>' == command[1])
 			{
 				switch (biasAdmin)
 				{
 					case true:
-						message.reply("No can do, all praise " + command[1] + ".");
+						message.reply("No can do, all praise " + command[1] + '.');
 						return;
-						break;
 					
 					case false:
 						target = member;
@@ -149,9 +150,9 @@ class VoteConductor
 			}
 		}
 
-		if (target == null)
+		if (target === null)
 		{
-			message.reply("No user found by " + command[1] + ".");
+			message.reply("No user found by " + command[1] + '.');
 
 			return;
 		}
@@ -162,7 +163,7 @@ class VoteConductor
 		currentVote = new VoteConductor
 			(
 				message,
-				desc + " " + command[1],
+				desc + ' ' + command[1],
 				
 				function()
 				{ action(target); },
@@ -180,7 +181,7 @@ class VoteConductor
 
 function messageToArray(message)
 {
-	var arr = message.content.split(" ");
+	var arr = message.content.split(' ');
 	arr[0] = arr[0].substring(1);
 	return arr;
 }
@@ -203,17 +204,17 @@ client.on("message", message =>
 		{
 			if (message.content.substring(0,1) == '=')
 			{
-				var command = message.content.split(" ");
+				var command = message.content.split(' ');
 
 				command[0] = command[0].substring(1);
 
 				switch(command[0])
 				{
-					case 'ping':
+					case "ping":
 						message.reply("Pong!");
 						break;
 
-					case 'destroy':
+					case "destroy":
 						if (message.author.username  == "ZLima12")
 						{
 							message.channel.sendMessage("Shutting down...");
@@ -223,7 +224,7 @@ client.on("message", message =>
 						
 						break;
 
-					case 'source':
+					case "source":
 						if (command.length > 1)
 							message.reply("If you were looking for my souce code, you can find it here:");
 						else
@@ -233,8 +234,8 @@ client.on("message", message =>
 
 						break;
 
-					case 'vote':
-						if (currentVote == null || !currentVote.underway())
+					case "vote":
+						if (currentVote === null || !currentVote.underway())
 						{
 							message.reply("There is currently no vote being run.");
 						}
@@ -275,17 +276,17 @@ client.on("message", message =>
 
 						break;
 
-					case 'mute':
+					case "mute":
 						VoteConductor.standardVote(message, "mute", function(member) { member.setMute(true); }, (2 / 3));
 
 						break;
 
-					case 'unmute':
+					case "unmute":
 						VoteConductor.standardVote(message, "unmute", function(member) {member.setMute(false); }, (2 / 3));
 						break;
 
-					case 'cancel':
-						if (currentVote == null || !currentVote.underway())
+					case "cancel":
+						if (currentVote === null || !currentVote.underway())
 						{
 							message.reply("There is currently no vote being run.");
 							break;
@@ -303,7 +304,7 @@ client.on("message", message =>
 						break;
 
 					default:
-						message.reply("What does \"" + command[0] + "\" mean?");
+						message.reply("What does `" + command[0] + "` mean?");
 				}
 			}
 		}
