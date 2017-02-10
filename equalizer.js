@@ -119,7 +119,7 @@ class VoteConductor
 			return;
 		}
 
-		if (message.member.voiceChannel === null)
+		if (message.member.voiceChannel === undefined)
 		{
 			message.reply("You must be in a voice channel to start this vote.");
 			return;
