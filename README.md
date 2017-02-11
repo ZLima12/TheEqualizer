@@ -13,4 +13,4 @@ As of now, the bot is nowhere near where I evision it in the future, but I suppo
 
 This project is written in JavaScript and makes use of the [discord.js](https://discord.js.org) API.
 
-You will need node.js to run this bot, and if you decide to attempt to do so, you must create a new bot and define your auth code as `key` in auth.js.
+You will need node.js to run this bot, and if you decide to attempt to do so, you must create a new bot and define your auth code as `key` in auth.json.
