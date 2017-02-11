@@ -4,189 +4,14 @@ const Discord = require("discord.js");
 
 const Auth = require("./auth");
 
+const VoteSystem = require("./vote");
+
 const client = new Discord.Client();
 
-const biasAdmin = false;
+const Poll = VoteSystem.Poll;
+const Vote = VoteSystem.Vote;
 
-class Vote
-{
-	constructor(member, upvote)
-	{
-		this.member = member;
-		this.modifier = (upvote) ? 1 : -1;
-	}
-}
-
-class VoteConductor
-{
-	constructor(message, desc, action, valid, votesNeeded)
-	{
-		this.message = message;
-		this.uid = message.author.id;
-		this.desc = desc;
-		this.action = action;
-		this.stillValid = valid;
-		this.votesNeeded = votesNeeded;
-		this.votes = [];
-	}
-
-	voteCount()
-	{
-		var count = 0;
-		
-		for (var i = 0; i < this.votes.length; i++)
-			count += this.votes[i].modifier;
-
-
-		return count;
-	}
-
-	underway()
-	{
-		return (this.votes.length > 0);
-	}
-
-	sendMessage(message)
-	{
-		this.message.channel.sendMessage(message);
-	}
-
-	reply(message)
-	{
-		this.message.reply(message);
-	}
-
-	start()
-	{
-		var message = this.message;
-
-		if (currentVote !== null && currentVote.underway())
-		{
-			message.reply("A vote to " + currentVote.desc + " is currently underway. ");
-		}
-	
-		else if (message.channel.type != "text")
-		{
-			message.reply("I'm not quite sure what to do in this context...");
-			return;
-		}
-	
-		else
-		{
-			this.votes.push(new Vote(message.member, true));
-			currentVote = this;
-			
-			this.sendMessage("A vote has been started to " + this.desc + '.');
-			this.sendMessage(currentVote.voteCount() + '/' + currentVote.votesNeeded() + " votes.");
-			VoteConductor.checkVote();
-		}
-	}
-
-	static checkVote()
-	{
-		if (currentVote !== null && currentVote.underway())
-		{
-			if (!currentVote.stillValid())
-			{
-				currentVote.sendMessage("The vote has been invalidated.");
-				currentVote = null;
-				return;
-			}
-	
-			if (currentVote.voteCount() >= currentVote.votesNeeded())
-			{
-				currentVote.sendMessage("The vote to " + currentVote.desc + " has concluded successfully!");
-				currentVote.action();
-				currentVote = null;
-				return;
-			}
-		}
-	}
-
-	static standardVote(message, desc, action, fraction)
-	{
-		var command = messageToArray(message);
-
-		if (command.length != 2)
-		{
-			message.reply("Invalid usage. `mute @SomeUser`.");
-			return;
-		}
-
-		if (currentVote !== null && currentVote.underway())
-		{
-			message.reply("There is already a vote underway.");
-			return;
-		}
-
-		if (message.member.voiceChannel === undefined)
-		{
-			message.reply("You must be in a voice channel to start this vote.");
-			return;
-		}
-		var vc = message.member.voiceChannel;
-		
-		var memberArray = vc.members.array();
-		
-		var target = null;
-
-		for (var member of memberArray)
-		{
-			if ("<@" + member.user.id + '>' == command[1])
-				target = member;
-
-			else if ("<@!" + member.user.id + '>' == command[1])
-			{
-				switch (biasAdmin)
-				{
-					case true:
-						message.reply("No can do, all praise " + command[1] + '.');
-						return;
-					
-					case false:
-						target = member;
-						break;
-				}
-			}
-		}
-
-		if (target === null)
-		{
-			message.reply("No user found by " + command[1] + '.');
-
-			return;
-		}
-		
-		var channel = target.voiceChannel;
-		var channelID = target.voiceChannelID;
-
-		currentVote = new VoteConductor
-			(
-				message,
-				desc + ' ' + command[1],
-				
-				function()
-				{ action(target); },
-				
-				function()
-				{ return target.voiceChannelID == channelID; },
-				
-				function()
-				{ return Math.floor(channel.members.array().length * fraction); }
-			);
-
-		currentVote.start();
-	}
-}
-
-function messageToArray(message)
-{
-	var arr = message.content.split(' ');
-	arr[0] = arr[0].substring(1);
-	return arr;
-}
-
-var currentVote = null;
+var currentPoll = null;
 
 client.on("ready", () =>
 		{
@@ -196,7 +21,12 @@ client.on("ready", () =>
 
 client.on("voiceStateUpdate", () =>
 		{
-			VoteConductor.checkVote();
+			if (currentPoll !== null)
+			{
+				currentPoll.check();
+				if (currentPoll.concluded)
+					currentPoll = null;
+			}
 		}
 	 );
 
@@ -235,7 +65,7 @@ client.on("message", message =>
 						break;
 
 					case "vote":
-						if (currentVote === null || !currentVote.underway())
+						if (currentPoll === null || !currentPoll.underway())
 						{
 							message.reply("There is currently no vote being run.");
 						}
@@ -243,9 +73,9 @@ client.on("message", message =>
 						else
 						{
 							var prevVoted = false;
-							for (var i = 0; i < currentVote.votes.length; i++)
+							for (var vote of currentPoll.votes)
 							{
-								var member = currentVote.votes[i];
+								var member = vote.member;
 								if (member.id == message.member.id)
 								{
 									message.reply("You have already voted.");
@@ -255,51 +85,65 @@ client.on("message", message =>
 
 							if (prevVoted) break;
 
-							if (command.length != 2)
+							if (command.length != 2 || (command[1].toLowerCase() != "yes" && command[1].toLowerCase() != "no"))
 							{
 								message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
 								break;
 							}
 
-							if (command[1].toLowerCase() != "yes" && command[1].toLowerCase() != "no")
-							{
-								message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
-								break;
-							}
-
-							currentVote.votes.push(new Vote(message.member, (command[1].toLowerCase() == "yes")));
+							currentPoll.votes.push(new Vote(message.member, (command[1].toLowerCase() == "yes")));
 							
-							message.channel.sendMessage(currentVote.voteCount() + "/" + currentVote.votesNeeded() + " votes.");
+							message.channel.sendMessage(currentPoll.voteCount() + "/" + currentPoll.votesNeeded() + " votes.");
 							
-							VoteConductor.checkVote();
+							currentPoll.check();
+							if (currentPoll.concluded)
+								currentPoll = null;
 						}
 
 						break;
 
 					case "mute":
-						VoteConductor.standardVote(message, "mute", function(member) { member.setMute(true); }, (2 / 3));
+						if (currentPoll === null)
+						{
+							currentPoll = Poll.standardPoll(message, "mute", function(member) { member.setMute(true); }, (2 / 3));
+							if (currentPoll !== null)
+								currentPoll.start();
+						}
+
+						else
+							message.reply("There is already a poll underway.");
 
 						break;
 
 					case "unmute":
-						VoteConductor.standardVote(message, "unmute", function(member) {member.setMute(false); }, (2 / 3));
+						if (currentPoll === null)
+						{
+							currentPoll = Poll.standardPoll(message, "unmute", function(member) { member.setMute(false); }, (2 / 3));
+
+							if (currentPoll !== null)
+								currentPoll.start();
+						}
+
+						else
+							message.reply("There is already a poll underway.");
+
 						break;
 
 					case "cancel":
-						if (currentVote === null || !currentVote.underway())
+						if (currentPoll === null || !currentPoll.underway())
 						{
-							message.reply("There is currently no vote being run.");
+							message.reply("There is currently no poll being run.");
 							break;
 						}
 
-						if (message.author.id == currentVote.uid)
+						if (message.author.id == currentPoll.uid)
 						{
-							currentVote.sendMessage("The vote to " + currentVote.desc + " has been canceled.");
-							currentVote = null;
+							currentPoll.sendMessage("The vote to " + currentPoll.desc + " has been canceled.");
+							currentPoll = null;
 							break;
 						}
 
-						message.reply("No can do. Only " + currentVote.message.author.username + " can cancel the current vote.");
+						message.reply("No can do. Only " + currentPoll.message.author.username + " can cancel the current vote.");
 
 						break;
 
