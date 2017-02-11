@@ -2,9 +2,9 @@
 
 const Discord = require("discord.js");
 
-const Auth = require("./auth");
+const Auth = require("./auth.json");
 
-const VoteSystem = require("./vote");
+const VoteSystem = require("./vote.js");
 
 const client = new Discord.Client();
 
