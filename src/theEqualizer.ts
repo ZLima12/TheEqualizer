@@ -2,7 +2,7 @@ import * as DiscordJS from "discord.js";
 
 import * as VoteSystem from "./vote";
 
-const Auth = require("./auth.json");
+const Auth = require("../auth.json");
 
 const client: DiscordJS.Client = new DiscordJS.Client();
 
