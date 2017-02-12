@@ -25,7 +25,7 @@ client.on("voiceStateUpdate", () =>
 		}
 	 );
 
-client.on("message", (message) =>
+client.on("message", (message: DiscordJS.Message) =>
 		{
 			if (message.content.substring(0,1) == '=')
 			{
