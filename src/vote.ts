@@ -121,7 +121,8 @@ export class Poll
 		fraction: number
 	): Poll
 	{
-		let command: Array<string> = messageToArray(message);
+		let command: Array<string> = message.content.split(' ');
+		command[0] = command[0].substring(1);
 
 		if (command.length != 2)
 		{
@@ -176,11 +177,4 @@ export class Poll
 			() => Math.floor(voiceChannel.members.array().length * fraction)
 		);
 	}
-}
-
-function messageToArray(message: DiscordJS.Message): Array<string>
-{
-	let arr: Array<string> = message.content.split(' ');
-	arr[0] = arr[0].substring(1);
-	return arr;
 }
