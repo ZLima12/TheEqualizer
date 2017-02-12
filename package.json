@@ -1,0 +1,34 @@
+{
+	"name": "theEqualizer",
+	"version": "0.0.0",
+	"description": "A Discord Bot Built For Democracy",
+	"homepage": "https://github.com/ZLima12/TheEqualizer",
+	"private": true,
+	"main": "js/theEqualizer.js",
+
+	"keywords":
+	[
+		"discord",
+		"bot",
+		"discord.js"
+	],
+
+	"files":
+	[
+		"src/theEqualizer.ts",
+		"src/vote.ts",
+		"src/vote.d.ts"
+	],
+
+	"dependencies":
+	{
+		"discord.js": ">=11.0.0",
+		"typescript": "*"
+	},
+
+	"scripts":
+	{
+		"install": "tsc",
+		"start": "node js/theEqualizer.js"
+	}
+}
