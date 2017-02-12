@@ -1,17 +1,12 @@
-/*jshint esversion: 6 */
+import * as DiscordJS from "discord.js";
 
-const Discord = require("discord.js");
+import * as VoteSystem from "./vote";
 
 const Auth = require("./auth.json");
 
-const VoteSystem = require("./vote.js");
+const client: DiscordJS.Client = new DiscordJS.Client();
 
-const client = new Discord.Client();
-
-const Poll = VoteSystem.Poll;
-const Vote = VoteSystem.Vote;
-
-var currentPoll = null;
+let currentPoll: VoteSystem.Poll = null;
 
 client.on("ready", () =>
 		{
@@ -30,12 +25,11 @@ client.on("voiceStateUpdate", () =>
 		}
 	 );
 
-client.on("message", message =>
+client.on("message", (message) =>
 		{
 			if (message.content.substring(0,1) == '=')
 			{
-				var command = message.content.split(' ');
-
+				let command: Array<string> = message.content.split(' ');
 				command[0] = command[0].substring(1);
 
 				switch(command[0])
@@ -45,7 +39,7 @@ client.on("message", message =>
 						break;
 
 					case "destroy":
-						if (message.author.username  == "ZLima12")
+						if (message.author.username == "ZLima12")
 						{
 							message.channel.sendMessage("Shutting down...");
 							client.destroy();
@@ -59,7 +53,7 @@ client.on("message", message =>
 							message.reply("If you were looking for my souce code, you can find it here:");
 						else
 							message.reply("My source code is located here:");
-
+						
 						message.channel.sendMessage("`https://github.com/ZLima12/TheEqualizer`");
 
 						break;
@@ -72,10 +66,10 @@ client.on("message", message =>
 
 						else
 						{
-							var prevVoted = false;
-							for (var vote of currentPoll.votes)
+							let prevVoted: boolean = false;
+							for (let vote of currentPoll.votes)
 							{
-								var member = vote.member;
+								let member: DiscordJS.GuildMember = vote.member;
 								if (member.id == message.member.id)
 								{
 									message.reply("You have already voted.");
@@ -91,11 +85,12 @@ client.on("message", message =>
 								break;
 							}
 
-							currentPoll.votes.push(new Vote(message.member, (command[1].toLowerCase() == "yes")));
+							currentPoll.votes.push(new VoteSystem.Vote(message.member, (command[1].toLowerCase() == "yes")));
 							
 							message.channel.sendMessage(currentPoll.voteCount() + "/" + currentPoll.votesNeeded() + " votes.");
 							
 							currentPoll.check();
+
 							if (currentPoll.concluded)
 								currentPoll = null;
 						}
@@ -105,7 +100,7 @@ client.on("message", message =>
 					case "mute":
 						if (currentPoll === null)
 						{
-							currentPoll = Poll.standardPoll(message, "mute", function(member) { member.setMute(true); }, (2 / 3));
+							currentPoll = VoteSystem.Poll.standardPoll(message, "mute", function(member) { member.setMute(true); }, (2 / 3));
 							if (currentPoll !== null)
 								currentPoll.start();
 						}
@@ -118,7 +113,7 @@ client.on("message", message =>
 					case "unmute":
 						if (currentPoll === null)
 						{
-							currentPoll = Poll.standardPoll(message, "unmute", function(member) { member.setMute(false); }, (2 / 3));
+							currentPoll = VoteSystem.Poll.standardPoll(message, "unmute", function(member) { member.setMute(false); }, (2 / 3));
 
 							if (currentPoll !== null)
 								currentPoll.start();

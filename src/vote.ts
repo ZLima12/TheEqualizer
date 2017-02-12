@@ -1,19 +1,38 @@
-/*jshint esversion: 6 */
+import * as DiscordJS from "discord.js";
 
-const biasAdmin = false;
+const biasAdmin: boolean = false;
 
-class Vote
+export class Vote
 {
-	constructor(member, upvote)
+	member: DiscordJS.GuildMember;
+	modifier: number;
+
+	constructor(member: DiscordJS.GuildMember, upvote: boolean)
 	{
 		this.member = member;
 		this.modifier = (upvote) ? 1 : -1;
 	}
 }
 
-class Poll
+export class Poll
 {
-	constructor(message, desc, action, valid, votesNeeded)
+	message: DiscordJS.Message;
+	uid: string;
+	desc: string;
+	action: () => void;
+	stillValid: () => boolean;
+	votesNeeded: () => number;
+	votes: Array<Vote>;
+	concluded: boolean;
+
+	constructor
+	(
+		message: DiscordJS.Message,
+		desc: string,
+		action: () => void,
+		valid: () => boolean,
+		votesNeeded: () => number
+	)
 	{
 		this.message = message;
 		this.uid = message.author.id;
@@ -21,37 +40,36 @@ class Poll
 		this.action = action;
 		this.stillValid = valid;
 		this.votesNeeded = votesNeeded;
-		this.votes = [];
+		this.votes = new Array<Vote>();
 		this.concluded = false;
 	}
 
-	voteCount()
+	voteCount(): number
 	{
-		var count = 0;
+		let count = 0;
 		
-		for (var vote of this.votes)
+		for (let vote of this.votes)
 			count += vote.modifier;
-
-
+		
 		return count;
 	}
 
-	underway()
+	underway(): boolean
 	{
 		return (this.votes.length > 0);
 	}
 
-	sendMessage(message)
+	sendMessage(message: string): void
 	{
 		this.message.channel.sendMessage(message);
 	}
 
-	reply(message)
+	reply(message: string): void
 	{
 		this.message.reply(message);
 	}
 
-	start()
+	start() : void
 	{
 		if (this.message.channel.type != "text")
 		{
@@ -69,16 +87,19 @@ class Poll
 		}
 	}
 
-	end(message = "The poll has ended.")
+	end(message: string = "The poll has ended."): void
 	{
 		this.concluded = true;
 
 		this.sendMessage(message);
 	}
 
-	check()
+	check(): void
 	{
-		if (this.concluded) ;
+		if (this.concluded)
+		{
+
+		}
 
 		else if (!this.stillValid())
 		{
@@ -92,13 +113,19 @@ class Poll
 		}
 	}
 
-	static standardPoll(message, desc, action, fraction)
+	static standardPoll
+	(
+		message: DiscordJS.Message,
+		desc: string,
+		action: (member: DiscordJS.GuildMember) => void,
+		fraction: number
+	): Poll
 	{
-		var command = messageToArray(message);
+		let command: Array<string> = messageToArray(message);
 
 		if (command.length != 2)
 		{
-			message.reply("Invalid usage. `=" + this.desc + " @SomeUser`.");
+			message.reply("Invalid usage. `=" + desc + " @SomeUser`.");
 			return null;
 		}
 
@@ -108,11 +135,11 @@ class Poll
 			return null;
 		}
 
-		var voiceChannel = message.member.voiceChannel;
+		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
 		
-		var target = null;
+		let target: DiscordJS.GuildMember = null;
 
-		for (var member of voiceChannel.members.array())
+		for (let member of voiceChannel.members.array())
 		{
 			if ("<@" + member.user.id + '>' == command[1])
 				target = member;
@@ -158,16 +185,9 @@ class Poll
 	}
 }
 
-function messageToArray(message)
+function messageToArray(message: DiscordJS.Message): Array<string>
 {
-	var arr = message.content.split(' ');
+	let arr: Array<string> = message.content.split(' ');
 	arr[0] = arr[0].substring(1);
 	return arr;
 }
-
-
-module.exports =
-{
-	Poll: Poll,
-	Vote: Vote
-};
