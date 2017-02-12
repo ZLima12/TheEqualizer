@@ -167,21 +167,14 @@ export class Poll
 		}
 
 		return new Poll
-			(
-				message,
-				desc + ' ' + command[1],
-				
-				function()
-				{ action(target); },
-				
-				function()
-				{
-					return target.voiceChannelID == message.member.voiceChannelID;
-				},
-				
-				function()
-				{ return Math.floor(voiceChannel.members.array().length * fraction); }
-			);
+		(
+			message,
+			desc + ' ' + command[1],
+
+			() => action(target),
+			() => (target.voiceChannelID == message.member.voiceChannelID),
+			() => Math.floor(voiceChannel.members.array().length * fraction)
+		);
 	}
 }
 
