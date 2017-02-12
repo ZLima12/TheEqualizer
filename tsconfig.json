@@ -11,6 +11,7 @@
 	"files":
 	[
 		"src/theEqualizer.ts",
-		"src/vote.ts"
+		"src/vote.ts",
+		"src/vote.d.ts"
 	]
 }
