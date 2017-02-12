@@ -50,7 +50,7 @@ client.on("message", (message: DiscordJS.Message) =>
 
 					case "source":
 						if (command.length > 1)
-							message.reply("If you were looking for my souce code, you can find it here:");
+							message.reply("If you were looking for my source code, you can find it here:");
 						else
 							message.reply("My source code is located here:");
 						
