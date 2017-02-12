@@ -6,6 +6,13 @@
 	"private": true,
 	"main": "js/theEqualizer.js",
 
+	"author":
+	{
+		"name": "John Leuenhagen",
+		"email": "john@zlima12.com",
+		"url": "https://github.com/ZLima12"
+	},
+
 	"keywords":
 	[
 		"discord",
