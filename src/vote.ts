@@ -194,10 +194,10 @@ export class Poll
 
 		for (let member of voiceChannel.members.array())
 		{
-			if ("<@" + member.user.id + '>' == command[1])
+			if ("<@" + member.user.id + '>' === command[1])
 				target = member;
 
-			else if ("<@!" + member.user.id + '>' == command[1])
+			else if ("<@!" + member.user.id + '>' === command[1])
 			{
 				switch (biasAdmin)
 				{
@@ -225,7 +225,7 @@ export class Poll
 			desc + ' ' + command[1],
 
 			() => action(target),
-			() => (target.voiceChannelID == message.member.voiceChannelID),
+			() => (target.voiceChannelID === message.member.voiceChannelID),
 			() => Math.floor(voiceChannel.members.array().length * fraction)
 		);
 	}

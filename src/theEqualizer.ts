@@ -39,7 +39,7 @@ client.on
 
 	(message: DiscordJS.Message) =>
 	{
-		if (message.content.substring(0,1) == '=')
+		if (message.content.substring(0,1) === '=')
 		{
 			let command: Array<string> = message.content.split(' ');
 			command[0] = command[0].substring(1);
@@ -51,7 +51,7 @@ client.on
 					break;
 
 				case "destroy":
-					if (message.author.username == "ZLima12")
+					if (message.author.username === "ZLima12")
 					{
 						message.channel.sendMessage("Shutting down...");
 						client.destroy();
@@ -80,7 +80,7 @@ client.on
 					{
 						let voteType = VoteSystem.Vote.voteTypeFromString(command[1]);
 
-						if (command.length != 2 || voteType === undefined)
+						if (command.length !== 2 || voteType === undefined)
 						{
 							message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
 							break;
@@ -148,7 +148,7 @@ client.on
 						break;
 					}
 
-					if (message.author.id == currentPoll.uid || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
+					if (message.author.id === currentPoll.uid || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
 					{
 						currentPoll.sendMessage("The vote to " + currentPoll.desc + " has been canceled.");
 						currentPoll = null;
