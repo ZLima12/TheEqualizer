@@ -2,16 +2,43 @@ import * as DiscordJS from "discord.js";
 
 const biasAdmin: boolean = false;
 
+enum VoteType
+{
+	Upvote = 1,
+	Downvote = -1,
+	Abstain = 0
+}
+
 export class Vote
 {
 	member: DiscordJS.GuildMember;
-	modifier: number;
+	voteType: VoteType;
 
-	constructor(member: DiscordJS.GuildMember, upvote: boolean)
+	constructor(member: DiscordJS.GuildMember, voteType: VoteType)
 	{
 		this.member = member;
-		this.modifier = (upvote) ? 1 : -1;
+		this.voteType = voteType;
 	}
+
+	static voteTypeFromString(typeString: string): VoteType
+	{
+		let voteType: VoteType = null;
+
+		typeString = typeString.toLowerCase();
+
+		if (typeString === "yes" || typeString === "up")
+			return VoteType.Upvote;
+		
+		if (typeString === "no" || typeString === "down")
+			return VoteType.Downvote;
+		
+		if (typeString === "abstain" || typeString === "neutral")
+			return VoteType.Abstain;
+		
+		return undefined;
+	}
+
+	static Type = VoteType;
 }
 
 export class Poll
@@ -22,7 +49,7 @@ export class Poll
 	action: () => void;
 	stillValid: () => boolean;
 	votesNeeded: () => number;
-	votes: Array<Vote>;
+	votes: Map<string ,Vote>;
 	concluded: boolean;
 
 	constructor
@@ -40,23 +67,35 @@ export class Poll
 		this.action = action;
 		this.stillValid = valid;
 		this.votesNeeded = votesNeeded;
-		this.votes = new Array<Vote>();
+		this.votes = new Map<string, Vote>();
 		this.concluded = false;
 	}
 
-	voteCount(): number
+	voteSum(): number
 	{
 		let count = 0;
 		
-		for (let vote of this.votes)
-			count += vote.modifier;
+		for (let [id, vote] of this.votes)
+			count += vote.voteType;
 		
 		return count;
 	}
 
+	votesOfType(voteType: VoteType): Array<Vote>
+	{
+		let votes = new Array<Vote>();
+		for (let [id, vote] of this.votes)
+		{
+			if (vote.voteType === voteType)
+				votes.push(vote);
+		}
+
+		return votes;
+	}
+
 	underway(): boolean
 	{
-		return (this.votes.length > 0);
+		return (this.votes.size > 0);
 	}
 
 	sendMessage(message: string): void
@@ -69,6 +108,17 @@ export class Poll
 		this.message.reply(message);
 	}
 
+	sendStatus(): void
+	{
+		this.message.channel.sendMessage
+		(
+			"Sum of votes: " + this.voteSum() + " of " + this.votesNeeded() + " necessary.\n(" +
+			this.votesOfType(VoteType.Upvote).length + " upvotes, " +
+			this.votesOfType(VoteType.Downvote).length + " downvotes, and " +
+			this.votesOfType(VoteType.Abstain).length + " abstains)"
+		);
+	}
+
 	start() : void
 	{
 		if (this.message.channel.type != "text")
@@ -79,10 +129,10 @@ export class Poll
 	
 		else
 		{
-			this.votes.push(new Vote(this.message.member, true));
+			this.votes.set(this.message.author.id, new Vote(this.message.member, VoteType.Upvote));
 			
 			this.sendMessage("A poll has been started to " + this.desc + '.');
-			this.sendMessage(this.voteCount() + '/' + this.votesNeeded() + " votes.");
+			this.sendStatus();
 			this.check();
 		}
 	}
@@ -107,7 +157,7 @@ export class Poll
 			this.concluded = true;
 		}
 		
-		else if (this.voteCount() >= this.votesNeeded())
+		else if (this.voteSum() >= this.votesNeeded())
 		{
 			this.action();
 			this.end("The poll to " + this.desc + " has concluded successfully!");
@@ -128,7 +178,7 @@ export class Poll
 
 		if (command.length != 2)
 		{
-			message.reply("Invalid usage. `=" + desc + " @SomeUser`.");
+			message.reply("Invalid usage. `=" + command[0] + " @SomeUser`.");
 			return null;
 		}
 

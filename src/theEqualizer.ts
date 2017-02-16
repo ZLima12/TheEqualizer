@@ -78,28 +78,33 @@ client.on
 
 					else
 					{
-						let prevVoted: boolean = false;
-						for (let vote of currentPoll.votes)
-						{
-							let member: DiscordJS.GuildMember = vote.member;
-							if (member.id == message.member.id)
-							{
-								message.reply("You have already voted.");
-								prevVoted = true;
-							}
-						}
+						let voteType = VoteSystem.Vote.voteTypeFromString(command[1]);
 
-						if (prevVoted) break;
-
-						if (command.length != 2 || (command[1].toLowerCase() != "yes" && command[1].toLowerCase() != "no"))
+						if (command.length != 2 || voteType === undefined)
 						{
 							message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
 							break;
 						}
 
-						currentPoll.votes.push(new VoteSystem.Vote(message.member, (command[1].toLowerCase() == "yes")));
+						if (currentPoll.votes.get(message.author.id) !== undefined)
+						{
+							let vote = currentPoll.votes.get(message.author.id);
+							
+							if (vote.voteType === voteType)
+							{
+								message.reply("You have already voted, and your previous vote is the same as that one.");
+								break;
+							}
+
+							vote.voteType = voteType;
+							message.reply("You have changed your vote.");
+
+							currentPoll.check();
+						}
+
+						currentPoll.votes.set(message.author.id, new VoteSystem.Vote(message.member, voteType));
 						
-						message.channel.sendMessage(currentPoll.voteCount() + "/" + currentPoll.votesNeeded() + " votes.");
+						currentPoll.sendStatus();
 						
 						currentPoll.check();
 
