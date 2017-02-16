@@ -104,12 +104,14 @@ export class Poll
 		else if (!this.stillValid())
 		{
 			this.sendMessage("The poll has been invalidated.");
+			this.concluded = true;
 		}
 		
 		else if (this.voteCount() >= this.votesNeeded())
 		{
 			this.action();
 			this.end("The poll to " + this.desc + " has concluded successfully!");
+			this.concluded = true;
 		}
 	}
 
