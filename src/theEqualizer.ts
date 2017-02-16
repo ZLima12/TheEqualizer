@@ -143,7 +143,7 @@ client.on
 						break;
 					}
 
-					if (message.author.id == currentPoll.uid)
+					if (message.author.id == currentPoll.uid || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
 					{
 						currentPoll.sendMessage("The vote to " + currentPoll.desc + " has been canceled.");
 						currentPoll = null;
