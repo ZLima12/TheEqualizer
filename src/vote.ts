@@ -165,6 +165,42 @@ export class Poll
 		}
 	}
 
+	vote(message: DiscordJS.Message): void
+	{
+		let command: Array<string> = message.content.split(' ');
+		command[0] = command[0].substring(0);
+
+		let voteType = Vote.voteTypeFromString(command[1]);
+
+		if (command.length !== 2 || voteType === undefined)
+		{
+			message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
+			return;
+		}
+
+		if (this.votes.get(message.author.id) !== undefined)
+		{
+			let vote = this.votes.get(message.author.id);
+			
+			if (vote.voteType === voteType)
+			{
+				message.reply("You have already voted, and your previous vote is the same as that one.");
+				return;
+			}
+
+			vote.voteType = voteType;
+			message.reply("You have changed your vote.");
+
+			this.check();
+		}
+
+		this.votes.set(message.author.id, new Vote(message.member, voteType));
+		
+		this.sendStatus();
+		
+		this.check();
+	}
+
 	static standardPoll
 	(
 		message: DiscordJS.Message,

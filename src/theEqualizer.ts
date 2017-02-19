@@ -78,35 +78,7 @@ client.on
 
 					else
 					{
-						let voteType = VoteSystem.Vote.voteTypeFromString(command[1]);
-
-						if (command.length !== 2 || voteType === undefined)
-						{
-							message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
-							break;
-						}
-
-						if (currentPoll.votes.get(message.author.id) !== undefined)
-						{
-							let vote = currentPoll.votes.get(message.author.id);
-							
-							if (vote.voteType === voteType)
-							{
-								message.reply("You have already voted, and your previous vote is the same as that one.");
-								break;
-							}
-
-							vote.voteType = voteType;
-							message.reply("You have changed your vote.");
-
-							currentPoll.check();
-						}
-
-						currentPoll.votes.set(message.author.id, new VoteSystem.Vote(message.member, voteType));
-						
-						currentPoll.sendStatus();
-						
-						currentPoll.check();
+						currentPoll.vote(message);
 
 						if (currentPoll.concluded)
 							currentPoll = null;
