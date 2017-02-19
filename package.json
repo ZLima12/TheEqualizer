@@ -23,8 +23,7 @@
 	"files":
 	[
 		"src/theEqualizer.ts",
-		"src/vote.ts",
-		"src/vote.d.ts"
+		"src/vote.ts"
 	],
 
 	"dependencies":
