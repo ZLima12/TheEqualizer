@@ -2,7 +2,7 @@ import * as DiscordJS from "discord.js";
 
 import * as VoteSystem from "./vote";
 
-const Auth = require("../auth.json");
+const Options = require("../options.json");
 
 const client: DiscordJS.Client = new DiscordJS.Client();
 
@@ -51,7 +51,7 @@ client.on
 					break;
 
 				case "destroy":
-					if (message.author.username === "ZLima12")
+					if (message.author.id === Options.ownerID)
 					{
 						message.channel.sendMessage("Shutting down...");
 						client.destroy();
@@ -138,4 +138,4 @@ client.on
 	}
 );
 
-client.login(Auth.key);
+client.login(Options.auth);
