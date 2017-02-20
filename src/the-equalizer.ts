@@ -2,11 +2,43 @@ import * as DiscordJS from "discord.js";
 
 import * as VoteSystem from "./vote";
 
+import * as IsOnline from "is-online";
+
 const Options = require("../options.json");
 
 const client: DiscordJS.Client = new DiscordJS.Client();
 
 let currentPoll: VoteSystem.Poll = null;
+
+async function loginWaiter()
+{
+	console.log("Waiting for a connection to Discord before logging in...");
+	for (let firstTry = true; ; firstTry = false)
+	{
+		let result = await IsOnline
+		(
+			{
+				timeout: 5000,
+				hostnames:
+				[
+					"https://discordapp.com"
+				]
+			}
+		);
+
+		if (result)
+		{
+			client.login(Options.auth);
+			console.log("Connected!");
+			break;
+		}
+
+		else if (!firstTry)
+		{
+			console.log("Couldn't connect... trying again!");
+		}
+	}
+}
 
 client.on
 (
@@ -14,7 +46,7 @@ client.on
 	
 	() =>
 	{
-		console.log("ready");
+		console.log("Ready!");
 	}
 );
 
@@ -53,7 +85,7 @@ client.on
 				case "destroy":
 					if (message.author.id === Options.ownerID)
 					{
-						message.channel.sendMessage("Shutting down...");
+						console.log("Shutting down...");
 						client.destroy();
 						process.exit();
 					}
@@ -138,4 +170,4 @@ client.on
 	}
 );
 
-client.login(Options.auth);
+loginWaiter();
