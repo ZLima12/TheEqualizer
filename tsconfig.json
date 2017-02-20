@@ -8,9 +8,8 @@
 		"outDir": "js"
 	},
 
-	"files":
+	"include":
 	[
-		"src/theEqualizer.ts",
-		"src/vote.ts"
+		"src/**/*"
 	]
 }
