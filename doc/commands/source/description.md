@@ -1,0 +1,1 @@
+When run, the `source` command will simply respond with the URL to the bot's source code.

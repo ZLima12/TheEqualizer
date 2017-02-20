@@ -1,0 +1,1 @@
+The `ping` command is the most simple command; when run, the bot will reply with `Pong!`.

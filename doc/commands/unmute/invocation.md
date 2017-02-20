@@ -1,0 +1,1 @@
+`=unmute @SomeUser` - Begins a poll to unmute SomeUser. Parameter must be a tag, not plaintext.

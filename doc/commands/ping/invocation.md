@@ -1,0 +1,1 @@
+`=ping` - May be run by any user. Responds with `Pong!`.
