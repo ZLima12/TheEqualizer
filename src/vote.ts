@@ -1,4 +1,5 @@
 import * as DiscordJS from "discord.js";
+import Command from "./commands/command";
 
 const biasAdmin: boolean = false;
 
@@ -165,7 +166,7 @@ export class Poll
 		}
 	}
 
-	vote(message: DiscordJS.Message): void
+	vote(message: DiscordJS.Message): Command.ExitStatus
 	{
 		let command: Array<string> = message.content.split(' ');
 		command[0] = command[0].substring(0);
@@ -174,8 +175,7 @@ export class Poll
 
 		if (command.length !== 2 || voteType === undefined)
 		{
-			message.reply("Invalid usage of vote. Either `=vote yes` or `=vote no`.");
-			return;
+			return Command.ExitStatus.BadInvocation;
 		}
 
 		if (this.votes.get(message.author.id) !== undefined)
@@ -184,14 +184,12 @@ export class Poll
 			
 			if (vote.voteType === voteType)
 			{
-				message.reply("You have already voted, and your previous vote is the same as that one.");
-				return;
+				message.reply("You have already voted, and your previous vote is the same as the new one.");
+				return Command.ExitStatus.BadInvokeNoReply;
 			}
 
 			vote.voteType = voteType;
 			message.reply("You have changed your vote.");
-
-			this.check();
 		}
 
 		this.votes.set(message.author.id, new Vote(message.member, voteType));
@@ -199,6 +197,8 @@ export class Poll
 		this.sendStatus();
 		
 		this.check();
+
+		return Command.ExitStatus.Success;
 	}
 
 	static standardPoll
@@ -214,7 +214,6 @@ export class Poll
 
 		if (command.length != 2)
 		{
-			message.reply("Invalid usage. `=" + command[0] + " @SomeUser`.");
 			return null;
 		}
 
@@ -239,7 +238,7 @@ export class Poll
 				{
 					case true:
 						message.reply("No can do, all praise " + command[1] + '.');
-						return;
+						return null;
 					
 					case false:
 						target = member;
@@ -265,4 +264,6 @@ export class Poll
 			() => Math.floor(voiceChannel.members.array().length * fraction)
 		);
 	}
+
+	static currentPoll = null;
 }
