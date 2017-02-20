@@ -1,5 +1,5 @@
 {
-	"name": "the_equalizer",
+	"name": "the-equalizer",
 	"version": "0.0.0",
 	"description": "A Discord Bot Built For Democracy",
 	"homepage": "https://github.com/ZLima12/TheEqualizer",
@@ -22,7 +22,7 @@
 
 	"files":
 	[
-		"src/theEqualizer.ts",
+		"src/the-equalizer.ts",
 		"src/vote.ts"
 	],
 
@@ -36,6 +36,6 @@
 	"scripts":
 	{
 		"install": "tsc",
-		"start": "node js/theEqualizer.js"
+		"start": "node js/the-equalizer.js"
 	}
 }
