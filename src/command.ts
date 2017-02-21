@@ -40,6 +40,7 @@ namespace Command
 	[
 		"cancel",
 		"destroy",
+		"help",
 		"list-commands",
 		"mute",
 		"ping",
