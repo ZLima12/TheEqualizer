@@ -47,6 +47,7 @@ Globals.client.on
 	() =>
 	{
 		console.log("Ready!");
+		Globals.client.user.setGame(Globals.motd);
 	}
 );
 
