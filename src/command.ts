@@ -78,7 +78,7 @@ namespace Command
 		switch (exitStatus)
 		{
 			case Command.ExitStatus.BadInvocation:
-				message.reply("From the documentation: \n\n" + command.Documentation.Invocation);
+				message.reply("Bad invocation. From the documentation: \n\n" + command.Documentation.Invocation);
 				break;
 		}
 
