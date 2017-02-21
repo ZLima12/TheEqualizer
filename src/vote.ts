@@ -3,43 +3,44 @@ import Command from "./commands/command";
 
 const biasAdmin: boolean = false;
 
-enum VoteType
-{
-	Upvote = 1,
-	Downvote = -1,
-	Abstain = 0
-}
-
 export class Vote
 {
 	member: DiscordJS.GuildMember;
-	voteType: VoteType;
+	voteType: Vote.Type;
 
-	constructor(member: DiscordJS.GuildMember, voteType: VoteType)
+	constructor(member: DiscordJS.GuildMember, voteType: Vote.Type)
 	{
 		this.member = member;
 		this.voteType = voteType;
 	}
+}
 
-	static voteTypeFromString(typeString: string): VoteType
+export namespace Vote
+{
+	export enum Type
 	{
-		let voteType: VoteType = null;
+		Upvote = 1,
+		Downvote = -1,
+		Abstain = 0
+	}
+
+	export function voteTypeFromString(typeString: string): Vote.Type
+	{
+		let voteType: Vote.Type = null;
 
 		typeString = typeString.toLowerCase();
 
 		if (typeString === "yes" || typeString === "up")
-			return VoteType.Upvote;
+			return Vote.Type.Upvote;
 		
 		if (typeString === "no" || typeString === "down")
-			return VoteType.Downvote;
+			return Vote.Type.Downvote;
 		
 		if (typeString === "abstain" || typeString === "neutral")
-			return VoteType.Abstain;
+			return Vote.Type.Abstain;
 		
 		return undefined;
 	}
-
-	static Type = VoteType;
 }
 
 export class Poll
@@ -82,7 +83,7 @@ export class Poll
 		return count;
 	}
 
-	votesOfType(voteType: VoteType): Array<Vote>
+	votesOfType(voteType: Vote.Type): Array<Vote>
 	{
 		let votes = new Array<Vote>();
 		for (let [id, vote] of this.votes)
@@ -114,9 +115,9 @@ export class Poll
 		this.message.channel.sendMessage
 		(
 			"Sum of votes: " + this.voteSum() + " of " + this.votesNeeded() + " necessary.\n(" +
-			this.votesOfType(VoteType.Upvote).length + " upvotes, " +
-			this.votesOfType(VoteType.Downvote).length + " downvotes, and " +
-			this.votesOfType(VoteType.Abstain).length + " abstains)"
+			this.votesOfType(Vote.Type.Upvote).length + " upvotes, " +
+			this.votesOfType(Vote.Type.Downvote).length + " downvotes, and " +
+			this.votesOfType(Vote.Type.Abstain).length + " abstains)"
 		);
 	}
 
@@ -130,7 +131,7 @@ export class Poll
 	
 		else
 		{
-			this.votes.set(this.message.author.id, new Vote(this.message.member, VoteType.Upvote));
+			this.votes.set(this.message.author.id, new Vote(this.message.member, Vote.Type.Upvote));
 			
 			this.sendMessage("A poll has been started to " + this.desc + '.');
 			this.sendStatus();
@@ -200,8 +201,13 @@ export class Poll
 
 		return Command.ExitStatus.Success;
 	}
+}
 
-	static standardPoll
+export namespace Poll
+{
+	export var currentPoll: Poll = null;
+
+	export function standardPoll
 	(
 		message: DiscordJS.Message,
 		desc: string,
@@ -264,6 +270,4 @@ export class Poll
 			() => Math.floor(voiceChannel.members.array().length * fraction)
 		);
 	}
-
-	static currentPoll = null;
 }

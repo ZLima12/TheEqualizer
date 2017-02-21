@@ -1,7 +1,9 @@
 import * as DiscordJS from "discord.js";
 
-export default class Globals
+namespace Globals
 {
-	static client: DiscordJS.Client = undefined;
-	static options;
+	export var client: DiscordJS.Client = undefined;
+	export var options = undefined;
 }
+
+export default Globals;

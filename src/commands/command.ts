@@ -15,8 +15,20 @@ class Command
 		this.documentation = new Documentation(this.name);
 		this.documentation.loadSync();
 	}
+}
 
-	static SupportedCommands: Array<string> =
+namespace Command
+{
+	export enum ExitStatus
+	{
+		Success,
+		Failure,
+		CommandNotFound,
+		BadInvocation,
+		BadInvokeNoReply
+	}
+
+	export const SupportedCommands: Array<string> =
 	[
 		"cancel",
 		"destroy",
@@ -27,22 +39,22 @@ class Command
 		"vote"
 	];
 
-	static messageToArray(message: DiscordJS.Message): Array<string>
+	export function messageToArray(message: DiscordJS.Message): Array<string>
 	{
 		let command: Array<string> = message.content.split(' ');
 		command[0] = command[0].substring(1);
 		return command;
 	}
 
-	static loadedCommands: Map<string, Command> = new Map<string, Command>();
+	export var loadedCommands: Map<string, Command> = new Map<string, Command>();
 
-	static loadCommandsSync(): void
+	export function loadCommandsSync(): void
 	{
 		for (let command of Command.SupportedCommands)
 			Command.loadedCommands.set(command, require("./" + command));
 	}
 
-	static runCommand(message: DiscordJS.Message): Command.ExitStatus
+	export function runCommand(message: DiscordJS.Message): Command.ExitStatus
 	{
 		let messageArray: Array<string> = Command.messageToArray(message);
 		let command: Command = Command.loadedCommands.get(messageArray[0]);
@@ -63,18 +75,6 @@ class Command
 		}
 
 		return exitStatus;
-	}
-}
-
-namespace Command
-{
-	export enum ExitStatus
-	{
-		Success,
-		Failure,
-		CommandNotFound,
-		BadInvocation,
-		BadInvokeNoReply
 	}
 }
 
