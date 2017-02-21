@@ -1,5 +1,5 @@
 import * as DiscordJS from "discord.js";
-import Command from "./commands/command";
+import Command from "./command";
 import * as VoteSystem from "./vote";
 import Globals from "./globals";
 import * as IsOnline from "is-online";

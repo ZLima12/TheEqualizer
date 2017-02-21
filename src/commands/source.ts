@@ -1,4 +1,4 @@
-import Command from "./command";
+import Command from "../command";
 import * as DiscordJS from "discord.js";
 
 let source: Command = new Command

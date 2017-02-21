@@ -59,7 +59,7 @@ namespace Command
 	export function loadCommandsSync(): void
 	{
 		for (let command of Command.SupportedCommands)
-			Command.loadedCommands.set(command, require("./" + command));
+			Command.loadedCommands.set(command, require("./commands/" + command));
 	}
 
 	export function runCommand(message: DiscordJS.Message): Command.ExitStatus

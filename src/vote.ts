@@ -1,5 +1,5 @@
 import * as DiscordJS from "discord.js";
-import Command from "./commands/command";
+import Command from "./command";
 
 const biasAdmin: boolean = false;
 
