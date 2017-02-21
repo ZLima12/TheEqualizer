@@ -4,9 +4,17 @@ import Documentation from "./doc-container";
 
 class Command
 {
-	action: (message: DiscordJS.Message) => Command.ExitStatus;
-	name: string;
-	documentation: Documentation;
+	protected action: (message: DiscordJS.Message) => Command.ExitStatus;
+	get Action(): (message: DiscordJS.Message) => Command.ExitStatus
+	{ return this.action }
+
+	protected name: string;
+	get Name(): string
+	{ return this.name }
+
+	protected documentation: Documentation;
+	get Documentation(): Documentation
+	{ return this.documentation }
 
 	constructor(name: string, action: (message: DiscordJS.Message) => Command.ExitStatus)
 	{
@@ -65,12 +73,12 @@ namespace Command
 			return Command.ExitStatus.CommandNotFound;
 		}
 
-		let exitStatus: Command.ExitStatus = command.action(message);
+		let exitStatus: Command.ExitStatus = command.Action(message);
 
 		switch (exitStatus)
 		{
 			case Command.ExitStatus.BadInvocation:
-				message.reply("From the documentation: \n\n" + command.documentation.invocation);
+				message.reply("From the documentation: \n\n" + command.Documentation.Invocation);
 				break;
 		}
 

@@ -18,7 +18,7 @@ let vote: Command = new Command
 		{
 			let exitStatus: Command.ExitStatus = VoteSystem.Poll.currentPoll.vote(message);
 
-			if (VoteSystem.Poll.currentPoll.concluded)
+			if (VoteSystem.Poll.currentPoll.Concluded)
 				VoteSystem.Poll.currentPoll = null;
 
 			return exitStatus;

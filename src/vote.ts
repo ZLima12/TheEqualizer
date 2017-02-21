@@ -5,8 +5,15 @@ const biasAdmin: boolean = false;
 
 export class Vote
 {
-	member: DiscordJS.GuildMember;
-	voteType: Vote.Type;
+	protected member: DiscordJS.GuildMember;
+	get Member(): DiscordJS.GuildMember
+	{ return this.member }
+
+	protected voteType: Vote.Type;
+	get Type(): Vote.Type
+	{ return this.voteType }
+	set Type(type: Vote.Type)
+	{ this.voteType = type }
 
 	constructor(member: DiscordJS.GuildMember, voteType: Vote.Type)
 	{
@@ -45,14 +52,37 @@ export namespace Vote
 
 export class Poll
 {
-	message: DiscordJS.Message;
-	uid: string;
-	desc: string;
-	action: () => void;
-	stillValid: () => boolean;
-	votesNeeded: () => number;
-	votes: Map<string ,Vote>;
-	concluded: boolean;
+	protected message: DiscordJS.Message;
+	get Message(): DiscordJS.Message
+	{ return this.message }
+
+	protected author: DiscordJS.GuildMember;
+	get Author(): DiscordJS.GuildMember
+	{ return this.author }
+
+	protected desc: string;
+	get Description(): string
+	{ return this.desc }
+
+	protected action: () => void;
+	get Action(): () => void
+	{ return this.action }
+
+	protected stillValid: () => boolean;
+	get IsStillValid(): () => boolean
+	{ return this.stillValid }
+
+	protected votesNeeded: () => number;
+	get VotesNeeded(): () => number
+	{ return this.votesNeeded }
+
+	protected votes: Map<string ,Vote>;
+	get Votes(): Map<string, Vote>
+	{ return this.votes }
+
+	protected concluded: boolean;
+	get Concluded(): boolean
+	{ return this.concluded }
 
 	constructor
 	(
@@ -64,7 +94,7 @@ export class Poll
 	)
 	{
 		this.message = message;
-		this.uid = message.author.id;
+		this.author = message.member;
 		this.desc = desc;
 		this.action = action;
 		this.stillValid = valid;
@@ -78,7 +108,7 @@ export class Poll
 		let count = 0;
 		
 		for (let [id, vote] of this.votes)
-			count += vote.voteType;
+			count += vote.Type;
 		
 		return count;
 	}
@@ -88,7 +118,7 @@ export class Poll
 		let votes = new Array<Vote>();
 		for (let [id, vote] of this.votes)
 		{
-			if (vote.voteType === voteType)
+			if (vote.Type === voteType)
 				votes.push(vote);
 		}
 
@@ -183,13 +213,13 @@ export class Poll
 		{
 			let vote = this.votes.get(message.author.id);
 			
-			if (vote.voteType === voteType)
+			if (vote.Type === voteType)
 			{
 				message.reply("You have already voted, and your previous vote is the same as the new one.");
 				return Command.ExitStatus.BadInvokeNoReply;
 			}
 
-			vote.voteType = voteType;
+			vote.Type = voteType;
 			message.reply("You have changed your vote.");
 		}
 

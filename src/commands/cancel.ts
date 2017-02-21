@@ -16,14 +16,14 @@ let cancel: Command = new Command
 			return Command.ExitStatus.BadInvocation;
 		}
 
-		if (message.author.id === VoteSystem.Poll.currentPoll.uid || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
+		if (message.author.id === VoteSystem.Poll.currentPoll.Author.id || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
 		{
-			VoteSystem.Poll.currentPoll.sendMessage("The vote to " + VoteSystem.Poll.currentPoll.desc + " has been canceled.");
+			VoteSystem.Poll.currentPoll.sendMessage("The vote to " + VoteSystem.Poll.currentPoll.Description + " has been canceled.");
 			VoteSystem.Poll.currentPoll = null;
 			return Command.ExitStatus.Success;
 		}
 
-		message.reply("No can do. Only " + VoteSystem.Poll.currentPoll.message.author.username + " can cancel the current vote.");
+		message.reply("No can do. Only " + VoteSystem.Poll.currentPoll.Author.user.username + " can cancel the current vote.");
 
 		return Command.ExitStatus.BadInvocation;
 	}

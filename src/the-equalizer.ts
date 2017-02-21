@@ -59,7 +59,7 @@ Globals.client.on
 		if (VoteSystem.Poll.currentPoll !== null)
 		{
 			VoteSystem.Poll.currentPoll.check();
-			if (VoteSystem.Poll.currentPoll.concluded)
+			if (VoteSystem.Poll.currentPoll.Concluded)
 				VoteSystem.Poll.currentPoll = null;
 		}
 	}

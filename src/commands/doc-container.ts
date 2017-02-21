@@ -2,9 +2,17 @@ import * as FS from "fs";
 
 export default class Documentation
 {
-	description: string;
-	invocation: string;
-	command: string;
+	protected description: string;
+	get Description(): string
+	{ return this.description }
+
+	protected invocation: string;
+	get Invocation(): string
+	{ return this.invocation }
+
+	protected command: string;
+	get Command(): string
+	{ return this.command }
 
 	constructor(commandName: string)
 	{
