@@ -6,7 +6,7 @@ let vote: Command = new Command
 (
 	"vote",
 
-	(message: DiscordJS.Message) =>
+	async (message: DiscordJS.Message) =>
 	{
 		if (VoteSystem.Poll.currentPoll === null || !VoteSystem.Poll.currentPoll.underway())
 		{

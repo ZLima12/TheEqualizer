@@ -4,8 +4,8 @@ import Documentation from "./doc-container";
 
 class Command
 {
-	protected action: (message: DiscordJS.Message) => Command.ExitStatus;
-	get Action(): (message: DiscordJS.Message) => Command.ExitStatus
+	protected action: (message: DiscordJS.Message) => Promise<Command.ExitStatus>;
+	get Action(): (message: DiscordJS.Message) => Promise<Command.ExitStatus>
 	{ return this.action }
 
 	protected name: string;
@@ -16,7 +16,7 @@ class Command
 	get Documentation(): Documentation
 	{ return this.documentation }
 
-	constructor(name: string, action: (message: DiscordJS.Message) => Command.ExitStatus)
+	constructor(name: string, action: (message: DiscordJS.Message) => Promise<Command.ExitStatus>)
 	{
 		this.action = action;
 		this.name = name;
@@ -62,7 +62,7 @@ namespace Command
 			Command.loadedCommands.set(command, require("./commands/" + command));
 	}
 
-	export function runCommand(message: DiscordJS.Message): Command.ExitStatus
+	export async function runCommand(message: DiscordJS.Message): Promise<Command.ExitStatus>
 	{
 		let messageArray: Array<string> = Command.messageToArray(message);
 		let command: Command = Command.loadedCommands.get(messageArray[0]);
@@ -73,7 +73,7 @@ namespace Command
 			return Command.ExitStatus.CommandNotFound;
 		}
 
-		let exitStatus: Command.ExitStatus = command.Action(message);
+		let exitStatus: Command.ExitStatus = await command.Action(message);
 
 		switch (exitStatus)
 		{

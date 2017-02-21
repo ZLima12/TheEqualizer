@@ -5,7 +5,7 @@ let source: Command = new Command
 (
 	"source",
 
-	(message: DiscordJS.Message) =>
+	async (message: DiscordJS.Message) =>
 	{
 		let command: Array<string> = message.content.split(' ');
 

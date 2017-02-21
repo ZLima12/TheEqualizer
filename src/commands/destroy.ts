@@ -6,7 +6,7 @@ let destroy: Command = new Command
 (
 	"destroy",
 
-	(message: DiscordJS.Message) =>
+	async (message: DiscordJS.Message) =>
 	{
 		if (message.author.id === Globals.options.ownerID)
 		{

@@ -5,7 +5,7 @@ let ping: Command = new Command
 (
 	"ping",
 
-	(message: DiscordJS.Message) =>
+	async (message: DiscordJS.Message) =>
 	{
 		message.reply("Pong!");
 

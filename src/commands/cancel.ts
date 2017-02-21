@@ -6,7 +6,7 @@ let cancel: Command = new Command
 (
 	"cancel",
 
-	(message: DiscordJS.Message) =>
+	async (message: DiscordJS.Message) =>
 	{
 		let command: Array<string> = Command.messageToArray(message);
 		

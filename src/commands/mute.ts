@@ -6,7 +6,7 @@ let mute: Command = new Command
 (
 	"mute",
 
-	(message: DiscordJS.Message) =>
+	async (message: DiscordJS.Message) =>
 	{
 		if (VoteSystem.Poll.currentPoll === null)
 		{

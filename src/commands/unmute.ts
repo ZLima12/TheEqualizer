@@ -6,7 +6,7 @@ let unmute: Command = new Command
 (
 	"unmute",
 
-	(message: DiscordJS.Message) =>
+	async (message: DiscordJS.Message) =>
 	{
 		if (VoteSystem.Poll.currentPoll === null)
 		{
