@@ -1,0 +1,1 @@
+`=list-commands` - Lists all known commands.

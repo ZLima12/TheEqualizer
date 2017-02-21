@@ -1,0 +1,1 @@
+`list-commands` will simply list all commands supported by the bot. Anyone may invoke this command.
