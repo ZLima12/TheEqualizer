@@ -58,7 +58,7 @@ class Command
 		switch (exitStatus)
 		{
 			case Command.ExitStatus.BadInvocation:
-				message.reply(command.documentation.invocation);
+				message.reply("From the documentation: \n\n" + command.documentation.invocation);
 				break;
 		}
 
