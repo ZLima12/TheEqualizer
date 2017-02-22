@@ -1,7 +1,7 @@
 import Command from "../command";
 import * as DiscordJS from "discord.js";
 
-let ping: Command = new Command
+export = new Command
 (
 	"ping",
 
@@ -12,5 +12,3 @@ let ping: Command = new Command
 		return Command.ExitStatus.Success;
 	}
 );
-
-export = ping;

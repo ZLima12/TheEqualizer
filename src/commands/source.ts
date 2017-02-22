@@ -1,7 +1,7 @@
 import Command from "../command";
 import * as DiscordJS from "discord.js";
 
-let source: Command = new Command
+export = new Command
 (
 	"source",
 
@@ -19,5 +19,3 @@ let source: Command = new Command
 		return Command.ExitStatus.Success;
 	}
 );
-
-export = source;

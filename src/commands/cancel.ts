@@ -2,7 +2,7 @@ import Command from "../command";
 import * as DiscordJS from "discord.js";
 import * as VoteSystem from "../vote";
 
-let cancel: Command = new Command
+export = new Command
 (
 	"cancel",
 
@@ -28,5 +28,3 @@ let cancel: Command = new Command
 		return Command.ExitStatus.BadInvocation;
 	}
 );
-
-export = cancel;

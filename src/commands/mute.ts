@@ -2,7 +2,7 @@ import Command from "../command";
 import * as DiscordJS from "discord.js";
 import * as VoteSystem from "../vote";
 
-let mute: Command = new Command
+export = new Command
 (
 	"mute",
 
@@ -29,5 +29,3 @@ let mute: Command = new Command
 		}
 	}
 );
-
-export = mute;

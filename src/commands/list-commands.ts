@@ -1,7 +1,7 @@
 import Command from "../command";
 import * as DiscordJS from "discord.js";
 
-let list: Command = new Command
+export = new Command
 (
 	"list-commands",
 
@@ -18,5 +18,3 @@ let list: Command = new Command
 		return Command.ExitStatus.Success;
 	}
 );
-
-export = list;

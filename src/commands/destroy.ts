@@ -2,7 +2,7 @@ import Command from "../command";
 import * as DiscordJS from "discord.js";
 import Globals from "../globals";
 
-let destroy: Command = new Command
+export = new Command
 (
 	"destroy",
 
@@ -18,5 +18,3 @@ let destroy: Command = new Command
 		else return Command.ExitStatus.BadInvocation;
 	}
 );
-
-export = destroy;

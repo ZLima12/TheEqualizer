@@ -2,7 +2,7 @@ import Command from "../command";
 import * as DiscordJS from "discord.js";
 import Globals from "../globals";
 
-let evalCommand: Command = new Command
+export = new Command
 (
 	"eval",
 
@@ -37,5 +37,3 @@ let evalCommand: Command = new Command
 			return Command.ExitStatus.BadInvocation;
 	}
 );
-
-export = evalCommand;

@@ -2,7 +2,7 @@ import Command from "../command";
 import Documentation from "../doc-container";
 import * as DiscordJS from "discord.js";
 
-let help: Command = new Command
+export = new Command
 (
 	"help",
 
@@ -53,5 +53,3 @@ let help: Command = new Command
 		return Command.ExitStatus.Success;
 	}
 );
-
-export = help;
