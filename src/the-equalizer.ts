@@ -72,7 +72,7 @@ Globals.client.on
 
 	(message: DiscordJS.Message) =>
 	{
-		if (message.content.substring(0,1) === '=')
+		if (message.content.startsWith('='))
 		{
 			Command.runCommand(message);
 		}

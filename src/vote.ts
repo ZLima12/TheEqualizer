@@ -200,7 +200,7 @@ export class Poll
 	vote(message: DiscordJS.Message): Command.ExitStatus
 	{
 		let command: Array<string> = message.content.split(' ');
-		command[0] = command[0].substring(0);
+		command[0] = command[0].substring(1);
 
 		let voteType = Vote.voteTypeFromString(command[1]);
 
