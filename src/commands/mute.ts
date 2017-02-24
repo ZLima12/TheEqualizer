@@ -1,6 +1,6 @@
 import Command from "../command";
 import * as DiscordJS from "discord.js";
-import * as VoteSystem from "../vote";
+import * as VoteSystem from "../vote-system";
 
 export = new Command
 (
