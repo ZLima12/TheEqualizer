@@ -72,9 +72,18 @@ Globals.client.on
 
 	(message: DiscordJS.Message) =>
 	{
-		if (message.content.startsWith('='))
+		if (message.author.id !== Globals.client.user.id)
 		{
-			Command.runCommand(message);
+			if (message.channel.type !== "text")
+			{
+				message.reply("Sorry, but I can only be used in servers currently.");
+				return;
+			}
+
+			if (message.content.startsWith('='))
+			{
+				Command.runCommand(message);
+			}
 		}
 	}
 );
