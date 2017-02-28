@@ -14,7 +14,7 @@ export = new Command
 		else
 			message.reply("My source code is located here:");
 		
-		message.channel.sendMessage("`https://github.com/ZLima12/TheEqualizer`");
+		message.channel.sendMessage("https://github.com/ZLima12/TheEqualizer");
 
 		return Command.ExitStatus.Success;
 	}
