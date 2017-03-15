@@ -1,6 +1,6 @@
 import Command from "../command";
 import * as DiscordJS from "discord.js";
-import Globals from "../globals";
+let options = require("../../options");
 
 export = new Command
 (
@@ -8,7 +8,7 @@ export = new Command
 
 	async (message: DiscordJS.Message) =>
 	{
-		if (message.author.id === Globals.options.ownerID)
+		if (message.author.id === options.ownerID)
 		{
 			console.log("Shutting down...");
 			message.client.destroy();

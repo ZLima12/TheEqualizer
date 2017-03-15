@@ -1,7 +1,7 @@
 import * as DiscordJS from "discord.js";
 import Command from "./command";
 import Vote from "./vote";
-import Globals from "./globals";
+let options = require("../options");
 
 class Poll
 {
@@ -223,7 +223,7 @@ namespace Poll
 
 			else if ("<@!" + member.user.id + '>' === command[1])
 			{
-				switch (Globals.options.biasAdmin)
+				switch (options.biasAdmin)
 				{
 					case true:
 						message.reply("No can do, all praise " + command[1] + '.');

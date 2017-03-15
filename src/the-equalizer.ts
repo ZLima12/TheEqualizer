@@ -1,12 +1,11 @@
 import * as DiscordJS from "discord.js";
 import Command from "./command";
 import * as VoteSystem from "./vote-system";
-import Globals from "./globals";
 import * as IsOnline from "is-online";
 
 Command.loadCommandsSync();
 
-Globals.options = require("../options.json");
+let options = require("../options");
 
 let client = new DiscordJS.Client();
 
@@ -28,7 +27,7 @@ async function loginWaiter()
 
 		if (result)
 		{
-			client.login(Globals.options.auth);
+			client.login(options.auth);
 			console.log("Connected!");
 			break;
 		}
@@ -47,7 +46,7 @@ client.on
 	() =>
 	{
 		console.log("Ready!");
-		client.user.setGame(Globals.motd);
+		client.user.setGame(options.motd);
 	}
 );
 
