@@ -12,7 +12,7 @@ let client = new DiscordJS.Client();
 async function loginWaiter()
 {
 	console.log("Waiting for a connection to Discord before logging in...");
-	for (let firstTry = true; ; firstTry = false)
+	while (true)
 	{
 		let result = await IsOnline
 		(
@@ -31,11 +31,8 @@ async function loginWaiter()
 			console.log("Connected!");
 			break;
 		}
-
-		else if (!firstTry)
-		{
-			console.log("Couldn't connect... trying again!");
-		}
+		
+		console.log("Couldn't connect... trying again!");
 	}
 }
 
