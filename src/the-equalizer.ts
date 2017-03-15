@@ -8,7 +8,7 @@ Command.loadCommandsSync();
 
 Globals.options = require("../options.json");
 
-Globals.client = new DiscordJS.Client();
+let client = new DiscordJS.Client();
 
 async function loginWaiter()
 {
@@ -28,7 +28,7 @@ async function loginWaiter()
 
 		if (result)
 		{
-			Globals.client.login(Globals.options.auth);
+			client.login(Globals.options.auth);
 			console.log("Connected!");
 			break;
 		}
@@ -40,18 +40,18 @@ async function loginWaiter()
 	}
 }
 
-Globals.client.on
+client.on
 (
 	"ready",
 	
 	() =>
 	{
 		console.log("Ready!");
-		Globals.client.user.setGame(Globals.motd);
+		client.user.setGame(Globals.motd);
 	}
 );
 
-Globals.client.on
+client.on
 (
 	"voiceStateUpdate",
 	
@@ -66,13 +66,13 @@ Globals.client.on
 	}
 );
 
-Globals.client.on
+client.on
 (
 	"message",
 
 	(message: DiscordJS.Message) =>
 	{
-		if (message.author.id !== Globals.client.user.id)
+		if (message.author.id !== message.client.user.id)
 		{
 			if (message.channel.type !== "text")
 			{

@@ -11,7 +11,7 @@ export = new Command
 		if (message.author.id === Globals.options.ownerID)
 		{
 			console.log("Shutting down...");
-			Globals.client.destroy();
+			message.client.destroy();
 			process.exit();
 		}
 
