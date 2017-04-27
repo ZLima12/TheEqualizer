@@ -27,7 +27,7 @@ class Command
 
 namespace Command
 {
-	export enum ExitStatus
+	export const enum ExitStatus
 	{
 		Success,
 		Failure,
