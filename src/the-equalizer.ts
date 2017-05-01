@@ -9,37 +9,10 @@ let options = require("../options");
 
 let client = new DiscordJS.Client();
 
-async function loginWaiter()
-{
-	console.log("Waiting for a connection to Discord before logging in...");
-	while (true)
-	{
-		let result = await IsOnline
-		(
-			{
-				timeout: 5000,
-				hostnames:
-				[
-					"https://discordapp.com"
-				]
-			}
-		);
-
-		if (result)
-		{
-			client.login(options.auth);
-			console.log("Connected!");
-			break;
-		}
-		
-		console.log("Couldn't connect... trying again!");
-	}
-}
-
 client.on
 (
 	"ready",
-	
+
 	() =>
 	{
 		console.log("Ready!");
@@ -50,7 +23,7 @@ client.on
 client.on
 (
 	"voiceStateUpdate",
-	
+
 	() =>
 	{
 		if (VoteSystem.Poll.currentPoll !== null)
@@ -61,6 +34,23 @@ client.on
 		}
 	}
 );
+
+client.on
+(
+	"disconnect",
+
+	() =>
+	{
+		client.destroy();
+
+		setTimeout
+		(
+			() => client.login(options.auth),
+
+			500
+		);
+	}
+)
 
 client.on
 (
@@ -84,4 +74,4 @@ client.on
 	}
 );
 
-loginWaiter();
+client.login(options.auth);
