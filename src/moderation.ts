@@ -6,7 +6,9 @@ namespace Moderation
 	{
 		export function shouldBeMoved(user: DiscordJS.GuildMember): boolean
 		{
-			return (user.voiceChannel !== undefined && user.selfMute && user.selfDeaf);
+			let dndChannel = DoNotDisturb.getDndChannel(user.guild);
+
+			return (user.voiceChannel !== undefined && user.voiceChannel !== dndChannel && user.selfMute && user.selfDeaf);
 		}
 
 		export function getDndChannel(guild: DiscordJS.Guild): DiscordJS.GuildChannel
