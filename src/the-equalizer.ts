@@ -1,6 +1,7 @@
 import * as DiscordJS from "discord.js";
 import Command from "./command";
 import * as VoteSystem from "./vote-system";
+import Moderation from "./moderation";
 
 Command.loadCommandsSync();
 
@@ -73,6 +74,18 @@ client.on
 		}
 	}
 );
+
+client.on
+(
+	"voiceStateUpdate",
+
+	(oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
+	{
+		Moderation.DoNotDisturb.moveUserIfAfk(newMember);
+	}
+);
+
+let dndTimerID = setInterval(Moderation.DoNotDisturb.moveAllAfkToDnd, 5000);
 
 function loginLoop()
 {
