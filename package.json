@@ -5,36 +5,26 @@
 	"homepage": "https://github.com/ZLima12/TheEqualizer",
 	"private": true,
 	"main": "js/theEqualizer.js",
-
-	"author":
-	{
+	"author": {
 		"name": "John Leuenhagen",
 		"email": "john@zlima12.com",
 		"url": "https://github.com/ZLima12"
 	},
-
-	"keywords":
-	[
+	"keywords": [
 		"discord",
 		"bot",
 		"discord.js"
 	],
-
-	"files":
-	[
+	"files": [
 		"src/the-equalizer.ts",
 		"src/vote.ts"
 	],
-
-	"dependencies":
-	{
+	"dependencies": {
+		"@types/node": ">=8.0.25",
 		"discord.js": ">=11.0.0",
-		"typescript": "*",
-		"is-online": "*"
+		"typescript": ">=2.4.2"
 	},
-
-	"scripts":
-	{
+	"scripts": {
 		"install": "tsc",
 		"start": "node js/the-equalizer.js"
 	}
