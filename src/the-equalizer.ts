@@ -100,7 +100,16 @@ function getGuildArray(): Array<DiscordJS.Guild>
 	return guilds;
 }
 
-let dndTimerID = setInterval(() => Moderation.DoNotDisturb.moveAllAfkToDnd(getGuildArray()), 2000);
+let dndTimerID = setInterval
+(
+	() =>
+	{
+		Moderation.DoNotDisturb.moveAllAfkToDnd(getGuildArray());
+		Moderation.DoNotDisturb.verifyAllPreviousChannelEntries();
+	},
+
+	2000
+);
 
 function loginLoop()
 {

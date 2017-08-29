@@ -66,6 +66,18 @@ namespace Moderation
 			}
 		}
 
+		export function verifyAllPreviousChannelEntries(): void
+		{
+			for (let entry of previousChannel)
+			{
+				let userID: DiscordJS.Snowflake = entry[0];
+				let channel: DiscordJS.GuildChannel = entry[1];
+				let guild: DiscordJS.Guild = channel.guild;
+
+				guild.fetchMember(userID).then((member: DiscordJS.GuildMember) => verifyPreviousChannelEntry(member));
+			}
+		}
+
 		export function restoreChannelIfReturned(user: DiscordJS.GuildMember): boolean
 		{
 			let channel = previousChannel.get(user.id);
