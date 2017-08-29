@@ -85,7 +85,19 @@ client.on
 	}
 );
 
-let dndTimerID = setInterval(Moderation.DoNotDisturb.moveAllAfkToDnd, 5000);
+function getGuildArray(): Array<DiscordJS.Guild>
+{
+	let guilds: Array<DiscordJS.Guild>;
+
+	for (let guild of client.guilds.values())
+	{
+		guilds.push(guild);
+	}
+
+	return guilds;
+}
+
+let dndTimerID = setInterval(() => Moderation.DoNotDisturb.moveAllAfkToDnd(getGuildArray()), 5000);
 
 function loginLoop()
 {
