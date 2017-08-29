@@ -4,11 +4,20 @@ namespace Moderation
 {
 	export namespace DoNotDisturb
 	{
+		let previousChannel: Map<DiscordJS.Snowflake, DiscordJS.GuildChannel> = new Map<DiscordJS.Snowflake, DiscordJS.GuildChannel>();
+
 		export function shouldBeMoved(user: DiscordJS.GuildMember): boolean
 		{
 			let dndChannel = DoNotDisturb.getDndChannel(user.guild);
 
 			return (user.voiceChannel !== undefined && user.voiceChannel !== dndChannel && user.selfMute && user.selfDeaf);
+		}
+
+		export function shouldBeReturned(user: DiscordJS.GuildMember): boolean
+		{
+			let dndChannel = DoNotDisturb.getDndChannel(user.guild);
+
+			return (user.voiceChannel === dndChannel && (!user.selfMute || !user.selfDeaf));
 		}
 
 		export function getDndChannel(guild: DiscordJS.Guild): DiscordJS.GuildChannel
@@ -35,7 +44,38 @@ namespace Moderation
 			{
 				if (DoNotDisturb.shouldBeMoved(user))
 				{
+					previousChannel.set(user.id, user.voiceChannel);
 					user.setVoiceChannel(dndChannel);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		export function verifyPreviousChannelEntry(user: DiscordJS.GuildMember): void
+		{
+			if (previousChannel.get(user.id) !== undefined)
+			{
+				let dndChannel = DoNotDisturb.getDndChannel(user.guild);
+
+				if (user.voiceChannel !== dndChannel)
+				{
+					previousChannel.delete(user.id);
+				}
+			}
+		}
+
+		export function restoreChannelIfReturned(user: DiscordJS.GuildMember): boolean
+		{
+			let channel = previousChannel.get(user.id);
+
+			if (channel !== undefined)
+			{
+				if (DoNotDisturb.shouldBeReturned(user))
+				{
+					user.setVoiceChannel(channel);
+					previousChannel.delete(user.id);
 					return true;
 				}
 			}
@@ -57,6 +97,7 @@ namespace Moderation
 					{
 						if (DoNotDisturb.shouldBeMoved(user))
 						{
+							previousChannel.set(user.id, user.voiceChannel);
 							user.setVoiceChannel(dndChannel);
 							movedMembers.push(user);
 						}

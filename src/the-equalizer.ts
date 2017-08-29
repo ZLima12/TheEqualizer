@@ -81,7 +81,10 @@ client.on
 
 	(oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
 	{
-		Moderation.DoNotDisturb.moveUserIfAfk(newMember);
+		if (Moderation.DoNotDisturb.moveUserIfAfk(newMember)) return;
+
+		Moderation.DoNotDisturb.restoreChannelIfReturned(newMember);
+		Moderation.DoNotDisturb.verifyPreviousChannelEntry(newMember);
 	}
 );
 
