@@ -1,7 +1,6 @@
 import * as DiscordJS from "discord.js";
 import Command from "./command";
 import * as VoteSystem from "./vote-system";
-import * as IsOnline from "is-online";
 
 Command.loadCommandsSync();
 
@@ -41,6 +40,7 @@ client.on
 
 	() =>
 	{
+		console.log("Bot disconnected, destroying and reconnecting...");
 		client.destroy();
 
 		setTimeout
@@ -50,7 +50,7 @@ client.on
 			500
 		);
 	}
-)
+);
 
 client.on
 (
@@ -74,4 +74,9 @@ client.on
 	}
 );
 
-client.login(options.auth);
+function loginLoop()
+{
+	client.login(options.auth).catch(() => setTimeout(loginLoop, 500));
+}
+
+loginLoop();
