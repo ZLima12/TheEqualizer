@@ -43,7 +43,7 @@ namespace Moderation
 
 		export function moveAllAfkToDnd(guilds: Array<DiscordJS.Guild>): Array<DiscordJS.GuildMember>
 		{
-			let movedMembers: Array<DiscordJS.GuildMember>;
+			let movedMembers: Array<DiscordJS.GuildMember> = new Array<DiscordJS.GuildMember>();
 
 			for (let guild of guilds)
 			{

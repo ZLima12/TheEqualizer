@@ -87,7 +87,7 @@ client.on
 
 function getGuildArray(): Array<DiscordJS.Guild>
 {
-	let guilds: Array<DiscordJS.Guild>;
+	let guilds: Array<DiscordJS.Guild> = new Array<DiscordJS.Guild>();
 
 	for (let guild of client.guilds.values())
 	{
