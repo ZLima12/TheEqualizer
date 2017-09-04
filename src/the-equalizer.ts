@@ -22,6 +22,24 @@ client.on
 
 client.on
 (
+	"disconnect",
+
+	() =>
+	{
+		console.log("Bot disconnected, destroying and reconnecting...");
+		client.destroy();
+
+		setTimeout
+		(
+			() => client.login(options.auth),
+
+			500
+		);
+	}
+);
+
+client.on
+(
 	"voiceStateUpdate",
 
 	() =>
@@ -37,19 +55,14 @@ client.on
 
 client.on
 (
-	"disconnect",
+	"voiceStateUpdate",
 
-	() =>
+	(oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
 	{
-		console.log("Bot disconnected, destroying and reconnecting...");
-		client.destroy();
+		if (Moderation.DoNotDisturb.moveUserIfAfk(newMember)) return;
 
-		setTimeout
-		(
-			() => client.login(options.auth),
-
-			500
-		);
+		Moderation.DoNotDisturb.restoreChannelIfReturned(newMember);
+		Moderation.DoNotDisturb.verifyPreviousChannelEntry(newMember);
 	}
 );
 
@@ -72,19 +85,6 @@ client.on
 				Command.runCommand(message);
 			}
 		}
-	}
-);
-
-client.on
-(
-	"voiceStateUpdate",
-
-	(oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
-	{
-		if (Moderation.DoNotDisturb.moveUserIfAfk(newMember)) return;
-
-		Moderation.DoNotDisturb.restoreChannelIfReturned(newMember);
-		Moderation.DoNotDisturb.verifyPreviousChannelEntry(newMember);
 	}
 );
 
