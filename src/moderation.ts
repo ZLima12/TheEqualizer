@@ -44,7 +44,11 @@ namespace Moderation
 			{
 				if (DoNotDisturb.shouldBeMoved(user))
 				{
-					previousChannel.set(user.id, user.voiceChannel);
+					if (previousChannel.get(user.id) === undefined)
+					{
+						previousChannel.set(user.id, user.voiceChannel);
+					}
+
 					user.setVoiceChannel(dndChannel);
 					return true;
 				}
@@ -59,7 +63,7 @@ namespace Moderation
 			{
 				let dndChannel = DoNotDisturb.getDndChannel(user.guild);
 
-				if (user.voiceChannel !== dndChannel)
+				if (!user.selfDeaf)
 				{
 					previousChannel.delete(user.id);
 				}
@@ -109,7 +113,11 @@ namespace Moderation
 					{
 						if (DoNotDisturb.shouldBeMoved(user))
 						{
-							previousChannel.set(user.id, user.voiceChannel);
+							if (previousChannel.get(user.id) === undefined)
+							{
+								previousChannel.set(user.id, user.voiceChannel);
+							}
+
 							user.setVoiceChannel(dndChannel);
 							movedMembers.push(user);
 						}
