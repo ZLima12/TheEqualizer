@@ -218,20 +218,14 @@ namespace Poll
 
 		for (let member of voiceChannel.members.array())
 		{
-			if ("<@" + member.user.id + '>' === command[1])
+			if ("<@" + member.user.id + '>' === command[1] || "<@!" + member.user.id + '>' === command[1])
+			{
 				target = member;
 
-			else if ("<@!" + member.user.id + '>' === command[1])
-			{
-				switch (options.biasAdmin)
+				if (member.hasPermission("ADMINISTRATOR") && options.biasAdmin)
 				{
-					case true:
-						message.reply("No can do, all praise " + command[1] + '.');
-						return null;
-
-					default:
-						target = member;
-						break;
+					message.reply("No can do, all praise " + command[1] + '!');
+					return null;
 				}
 			}
 		}
