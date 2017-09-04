@@ -59,10 +59,10 @@ class Poll
 	voteSum(): number
 	{
 		let count = 0;
-		
+
 		for (let [id, vote] of this.votes)
 			count += vote.Type;
-		
+
 		return count;
 	}
 
@@ -111,11 +111,11 @@ class Poll
 			this.message.reply("I'm not quite sure what to do in this context...");
 			return;
 		}
-	
+
 		else
 		{
 			this.votes.set(this.message.author.id, new Vote(this.message.member, Vote.Type.Upvote));
-			
+
 			this.sendMessage("A poll has been started to " + this.desc + '.');
 			this.sendStatus();
 			this.check();
@@ -141,7 +141,7 @@ class Poll
 			this.sendMessage("The poll has been invalidated.");
 			this.concluded = true;
 		}
-		
+
 		else if (this.voteSum() >= this.votesNeeded())
 		{
 			this.action();
@@ -165,7 +165,7 @@ class Poll
 		if (this.votes.get(message.author.id) !== undefined)
 		{
 			let vote = this.votes.get(message.author.id);
-			
+
 			if (vote.Type === voteType)
 			{
 				message.reply("You have already voted, and your previous vote is the same as the new one.");
@@ -177,9 +177,9 @@ class Poll
 		}
 
 		this.votes.set(message.author.id, new Vote(message.member, voteType));
-		
+
 		this.sendStatus();
-		
+
 		this.check();
 
 		return Command.ExitStatus.Success;
@@ -213,7 +213,7 @@ namespace Poll
 		}
 
 		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
-		
+
 		let target: DiscordJS.GuildMember = null;
 
 		for (let member of voiceChannel.members.array())
@@ -228,8 +228,8 @@ namespace Poll
 					case true:
 						message.reply("No can do, all praise " + command[1] + '.');
 						return null;
-					
-					case false:
+
+					default:
 						target = member;
 						break;
 				}
