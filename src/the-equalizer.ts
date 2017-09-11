@@ -76,7 +76,7 @@ client.on
 		{
 			if (message.channel.type !== "text")
 			{
-				message.reply("Sorry, but I can only be used in servers currently.");
+				message.reply("Sorry, but I can only be used in servers.");
 				return;
 			}
 
