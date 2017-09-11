@@ -2,12 +2,14 @@ import * as DiscordJS from "discord.js";
 import Command from "./command";
 import * as VoteSystem from "./vote-system";
 import Moderation from "./moderation";
+import GlobalClient from "./global-client";
 
 Command.loadCommandsSync();
 
 let options = require("../options");
 
 let client = new DiscordJS.Client();
+GlobalClient.Instance = client;
 
 client.on
 (
