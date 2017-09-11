@@ -18,7 +18,7 @@ export = new Command
 
 		if (message.author.id === VoteSystem.Poll.currentPoll.Author.id || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
 		{
-			VoteSystem.Poll.currentPoll.sendMessage("The vote to " + VoteSystem.Poll.currentPoll.Description + " has been canceled.");
+			VoteSystem.Poll.currentPoll.send("The vote to " + VoteSystem.Poll.currentPoll.Description + " has been canceled.");
 			VoteSystem.Poll.currentPoll = null;
 			return Command.ExitStatus.Success;
 		}

@@ -83,9 +83,9 @@ class Poll
 		return (this.votes.size > 0);
 	}
 
-	sendMessage(message: string): void
+	send(message: string): void
 	{
-		this.message.channel.sendMessage(message);
+		this.message.channel.send(message);
 	}
 
 	reply(message: string): void
@@ -95,7 +95,7 @@ class Poll
 
 	sendStatus(): void
 	{
-		this.message.channel.sendMessage
+		this.message.channel.send
 		(
 			"Sum of votes: " + this.voteSum() + " of " + this.votesNeeded() + " necessary.\n(" +
 			this.votesOfType(Vote.Type.Upvote).length + " upvotes, " +
@@ -116,7 +116,7 @@ class Poll
 		{
 			this.votes.set(this.message.author.id, new Vote(this.message.member, Vote.Type.Upvote));
 
-			this.sendMessage("A poll has been started to " + this.desc + '.');
+			this.send("A poll has been started to " + this.desc + '.');
 			this.sendStatus();
 			this.check();
 		}
@@ -126,7 +126,7 @@ class Poll
 	{
 		this.concluded = true;
 
-		this.sendMessage(message);
+		this.send(message);
 	}
 
 	check(): void
@@ -138,7 +138,7 @@ class Poll
 
 		else if (!this.stillValid())
 		{
-			this.sendMessage("The poll has been invalidated.");
+			this.send("The poll has been invalidated.");
 			this.concluded = true;
 		}
 
