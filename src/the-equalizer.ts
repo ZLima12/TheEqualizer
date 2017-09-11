@@ -88,23 +88,11 @@ client.on
 	}
 );
 
-function getGuildArray(): Array<DiscordJS.Guild>
-{
-	let guilds: Array<DiscordJS.Guild> = new Array<DiscordJS.Guild>();
-
-	for (let guild of client.guilds.values())
-	{
-		guilds.push(guild);
-	}
-
-	return guilds;
-}
-
 let dndTimerID = setInterval
 (
 	() =>
 	{
-		Moderation.DoNotDisturb.moveAllAfkToDnd(getGuildArray());
+		Moderation.DoNotDisturb.moveAllAfkToDnd(client.guilds.array());
 		Moderation.DoNotDisturb.verifyAllPreviousChannelEntries();
 	},
 
