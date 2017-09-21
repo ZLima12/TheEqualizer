@@ -13,7 +13,7 @@ export = new Command
 			message.reply("If you were looking for my source code, you can find it here:");
 		else
 			message.reply("My source code is located here:");
-		
+
 		message.channel.send("https://github.com/ZLima12/TheEqualizer");
 
 		return Command.ExitStatus.Success;

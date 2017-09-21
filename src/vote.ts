@@ -37,13 +37,13 @@ namespace Vote
 
 		if (typeString === "yes" || typeString === "up")
 			return Vote.Type.Upvote;
-		
+
 		if (typeString === "no" || typeString === "down")
 			return Vote.Type.Downvote;
-		
+
 		if (typeString === "abstain" || typeString === "neutral")
 			return Vote.Type.Abstain;
-		
+
 		return undefined;
 	}
 }

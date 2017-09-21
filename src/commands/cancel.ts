@@ -9,7 +9,7 @@ export = new Command
 	async (message: DiscordJS.Message) =>
 	{
 		let command: Array<string> = Command.messageToArray(message);
-		
+
 		if (VoteSystem.Poll.currentPoll === null || !VoteSystem.Poll.currentPoll.underway())
 		{
 			message.reply("There is currently no poll being run.");

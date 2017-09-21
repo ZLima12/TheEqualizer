@@ -11,7 +11,7 @@ export = new Command
 		let command: Array<string> = Command.messageToArray(message);
 		if (message.content.indexOf(' ') == -1)
 			return Command.ExitStatus.BadInvocation;
-		
+
 		if (message.author.id === options.ownerID)
 		{
 			let result;
@@ -20,7 +20,7 @@ export = new Command
 			{
 				result = eval(message.content.substring(message.content.indexOf(' ') + 1));
 			}
-			
+
 			catch (e)
 			{
 				message.reply("eval() failed! Exception thrown was `" + e + '`');
@@ -28,7 +28,7 @@ export = new Command
 				return Command.ExitStatus.BadInvokeNoReply;
 			}
 			message.channel.stopTyping();
-			
+
 			message.reply("eval() complete. Return value was: `" + result + '`');
 			return Command.ExitStatus.Success;
 		}
