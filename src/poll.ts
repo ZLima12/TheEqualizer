@@ -206,7 +206,6 @@ namespace Poll
 			return null;
 		}
 
-<<<<<<< HEAD
 		let server: DiscordJS.Guild = message.guild;
 
 		let target: DiscordJS.GuildMember = null;
@@ -259,8 +258,7 @@ namespace Poll
 			return null;
 		}
 
-=======
->>>>>>> a8e3a0994c58d9d9b5f1a276987ac0c9faa21884
+
 		if (message.member.voiceChannel === undefined)
 		{
 			message.reply("You must be in a voice channel to start this vote.");
