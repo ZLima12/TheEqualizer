@@ -33,7 +33,8 @@ namespace Command
 		Failure,
 		CommandNotFound,
 		BadInvocation,
-		BadInvokeNoReply
+		BadInvokeNoReply,
+		NotInVoiceChannel
 	}
 
 	export const SupportedCommands: Array<string> =
@@ -83,6 +84,9 @@ namespace Command
 		{
 			case Command.ExitStatus.BadInvocation:
 				message.reply("Bad invocation. From the documentation: \n\n" + command.Documentation.Invocation);
+				break;
+			case Command.ExitStatus.NotInVoiceChannel:
+				message.reply("You must be in the voice channel to vote in this vote");
 				break;
 		}
 

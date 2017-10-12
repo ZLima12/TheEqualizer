@@ -36,6 +36,10 @@ class Poll
 	protected concluded: boolean;
 	get Concluded(): boolean
 	{ return this.concluded }
+	
+	protected voiceChannel: () => DiscordJS.VoiceChannel;
+	get VoiceChannel(): () => DiscordJS.VoiceChannel
+	{ return this.voiceChannel }
 
 	constructor
 	(
@@ -43,7 +47,8 @@ class Poll
 		desc: string,
 		action: () => void,
 		valid: () => boolean,
-		votesNeeded: () => number
+		votesNeeded: () => number,
+		voiceChannel: () => DiscordJS.VoiceChannel /** null if not needed */
 	)
 	{
 		this.message = message;
@@ -54,6 +59,7 @@ class Poll
 		this.votesNeeded = votesNeeded;
 		this.votes = new Map<string, Vote>();
 		this.concluded = false;
+		this.voiceChannel = voiceChannel;
 	}
 
 	voteSum(): number
@@ -161,6 +167,11 @@ class Poll
 		{
 			return Command.ExitStatus.BadInvocation;
 		}
+		
+		if (this.voiceChannel() !== null && message.member.voiceChannel !== this.voiceChannel())
+		{
+			return Command.ExitStatus.NotInVoiceChannel;
+		}
 
 		if (this.votes.get(message.author.id) !== undefined)
 		{
@@ -238,7 +249,8 @@ namespace Poll
 
 			() => action(target),
 			() => (true),
-			() => Math.floor(server.members.array().length * fraction)
+			() => Math.floor(server.members.array().length * fraction),
+			() => null
 		);
 	}
 	
@@ -297,7 +309,8 @@ namespace Poll
 
 			() => action(target),
 			() => (target.voiceChannelID === message.member.voiceChannelID),
-			() => Math.floor(voiceChannel.members.array().length * fraction)
+			() => Math.floor(voiceChannel.members.array().length * fraction),
+			() => voiceChannel
 		);
 	}
 }
