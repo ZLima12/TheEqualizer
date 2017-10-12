@@ -241,6 +241,15 @@ namespace Poll
 
 			return null;
 		}
+		
+		let onlineUserCount: int = 0;
+		for (let member of server.members.array())
+		{
+			if (member.status === "online")
+			{
+				onlineUserCount ++;
+			}
+		}
 
 		return new Poll
 		(
@@ -249,7 +258,7 @@ namespace Poll
 
 			() => action(target),
 			() => (true),
-			() => Math.floor(server.members.array().length * fraction),
+			() => Math.floor(onlineUserCount * fraction),
 			() => null
 		);
 	}

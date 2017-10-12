@@ -86,7 +86,7 @@ namespace Command
 				message.reply("Bad invocation. From the documentation: \n\n" + command.Documentation.Invocation);
 				break;
 			case Command.ExitStatus.NotInVoiceChannel:
-				message.reply("You must be in the voice channel to vote in this vote");
+				message.reply("You must be in the voice channel to vote in this poll");
 				break;
 		}
 
