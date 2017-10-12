@@ -242,10 +242,10 @@ namespace Poll
 			return null;
 		}
 		
-		let onlineUserCount: int = 0;
+		let onlineUserCount: number = 0;
 		for (let member of server.members.array())
 		{
-			if (member.status === "online")
+			if (member.user.presence.status === "online")
 			{
 				onlineUserCount ++;
 			}
