@@ -1,0 +1,1 @@
+`=source` - May be run by any user. Returns URL to bot source code.

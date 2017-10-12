@@ -1,0 +1,1 @@
+The `cancel` command will cancel the current poll, and may only be run by the creator of the poll or anyone with the `Administrator` privilege so long as they run the command with `--force`.

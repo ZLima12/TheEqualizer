@@ -1,0 +1,3 @@
+The `mute` command will begin a poll to mute a specified user. However, the scope of this command is not an entire server, but rather a singular voice channel. This is to prevent a majority of users on a server from harassing a minority even if they are in their own voice channel and not bothering anyone.
+
+To successfully mute a user, a two thirds majority of the users in the current voice channel is required. By invoking this command, an upvote will automatically be cast for the invoker. Other users may vote using the `vote` command.

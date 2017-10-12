@@ -1,0 +1,1 @@
+`destroy` will terminate the process on the host running the bot. Only the user specified by the individual hosting this bot may run this command.

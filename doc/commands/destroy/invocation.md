@@ -1,0 +1,1 @@
+`=destroy` - Terminates host bot process. Need to be authorized in server config.

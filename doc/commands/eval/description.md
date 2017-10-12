@@ -1,0 +1,1 @@
+The `eval` command evaluates and runs JavaScript code. This command may only be run by the host of the bot.

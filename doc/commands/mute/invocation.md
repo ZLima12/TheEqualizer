@@ -1,0 +1,1 @@
+`=mute @SomeUser` - Begins a poll to mute SomeUser. Parameter must be a tag, not plaintext.

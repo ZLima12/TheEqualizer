@@ -1,0 +1,1 @@
+`=eval [code to run]` - Runs the provided JavaScript. May be run only by bot host.
