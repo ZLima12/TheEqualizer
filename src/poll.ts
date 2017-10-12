@@ -206,6 +206,61 @@ namespace Poll
 			return null;
 		}
 
+<<<<<<< HEAD
+		let server: DiscordJS.Guild = message.guild;
+
+		let target: DiscordJS.GuildMember = null;
+
+		for (let member of server.members.array())
+		{
+			if ("<@" + member.user.id + '>' === command[1] || "<@!" + member.user.id + '>' === command[1])
+			{
+				target = member;
+
+				if (member.hasPermission("ADMINISTRATOR") && options.biasAdmin)
+				{
+					message.reply("No can do, all praise " + command[1] + '!');
+					return null;
+				}
+			}
+		}
+
+		if (target === null)
+		{
+			message.reply("No user found by " + command[1] + '.');
+
+			return null;
+		}
+
+		return new Poll
+		(
+			message,
+			desc + ' ' + command[1],
+
+			() => action(target),
+			() => (true),
+			() => Math.floor(server.members.array().length * fraction)
+		);
+	}
+	
+	export function voicePoll
+	(
+		message: DiscordJS.Message,
+		desc: string,
+		action: (member: DiscordJS.GuildMember) => void,
+		fraction: number
+	): Poll
+	{
+		let command: Array<string> = message.content.split(' ');
+		command[0] = command[0].substring(1);
+
+		if (command.length != 2)
+		{
+			return null;
+		}
+
+=======
+>>>>>>> a8e3a0994c58d9d9b5f1a276987ac0c9faa21884
 		if (message.member.voiceChannel === undefined)
 		{
 			message.reply("You must be in a voice channel to start this vote.");

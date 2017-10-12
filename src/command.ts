@@ -47,7 +47,12 @@ namespace Command
 		"ping",
 		"source",
 		"unmute",
+<<<<<<< HEAD
+		"vote",
+		"kick"
+=======
 		"vote"
+>>>>>>> a8e3a0994c58d9d9b5f1a276987ac0c9faa21884
 	];
 
 	export function messageToArray(message: DiscordJS.Message): Array<string>
