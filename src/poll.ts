@@ -36,6 +36,10 @@ class Poll
 	protected concluded: boolean;
 	get Concluded(): boolean
 	{ return this.concluded }
+	
+	protected voiceChannel: DiscordJS.VoiceChannel;
+	get VoiceChannel(): DiscordJS.VoiceChannel
+	{ return this.voiceChannel }
 
 	constructor
 	(
@@ -43,7 +47,8 @@ class Poll
 		desc: string,
 		action: () => void,
 		valid: () => boolean,
-		votesNeeded: () => number
+		votesNeeded: () => number,
+		voiceChannel: DiscordJS.VoiceChannel /** null if not needed */
 	)
 	{
 		this.message = message;
@@ -54,6 +59,7 @@ class Poll
 		this.votesNeeded = votesNeeded;
 		this.votes = new Map<string, Vote>();
 		this.concluded = false;
+		this.voiceChannel = voiceChannel;
 	}
 
 	voteSum(): number
@@ -161,6 +167,11 @@ class Poll
 		{
 			return Command.ExitStatus.BadInvocation;
 		}
+		
+		if (this.voiceChannel !== null && message.member.voiceChannel !== this.voiceChannel)
+		{
+			return Command.ExitStatus.NotInVoiceChannel;
+		}
 
 		if (this.votes.get(message.author.id) !== undefined)
 		{
@@ -190,12 +201,13 @@ namespace Poll
 {
 	export var currentPoll: Poll = null;
 
-	export function standardPoll
+	export function startPoll
 	(
 		message: DiscordJS.Message,
 		desc: string,
 		action: (member: DiscordJS.GuildMember) => void,
-		fraction: number
+		fraction: number,
+		voicePoll: boolean
 	): Poll
 	{
 		let command: Array<string> = message.content.split(' ');
@@ -206,17 +218,19 @@ namespace Poll
 			return null;
 		}
 
-		if (message.member.voiceChannel === undefined)
+		let server: DiscordJS.Guild = message.guild;
+
+		let target: DiscordJS.GuildMember = null;
+		
+		if (voicePoll && message.member.voiceChannel === undefined)
 		{
 			message.reply("You must be in a voice channel to start this vote.");
 			return null;
 		}
-
+		
 		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
 
-		let target: DiscordJS.GuildMember = null;
-
-		for (let member of voiceChannel.members.array())
+		for (let member of server.members.array())
 		{
 			if ("<@" + member.user.id + '>' === command[1] || "<@!" + member.user.id + '>' === command[1])
 			{
@@ -236,6 +250,23 @@ namespace Poll
 
 			return null;
 		}
+		
+		let userCount: number = 0;
+		for (let member of server.members.array())
+		{
+			if (member.user.presence.status === "online")
+			{
+				userCount ++;
+			}
+		}
+		
+		if (voicePoll)
+		{
+			userCount = voiceChannel.members.array().length;
+		}else 
+		{
+			voiceChannel = null;
+		}
 
 		return new Poll
 		(
@@ -243,10 +274,12 @@ namespace Poll
 			desc + ' ' + command[1],
 
 			() => action(target),
-			() => (target.voiceChannelID === message.member.voiceChannelID),
-			() => Math.floor(voiceChannel.members.array().length * fraction)
+			() => (true),
+			() => Math.floor(userCount * fraction),
+			voiceChannel
 		);
 	}
+
 }
 
 export default Poll;

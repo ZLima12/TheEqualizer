@@ -4,13 +4,13 @@ import * as VoteSystem from "../vote-system";
 
 export = new Command
 (
-	"unmute",
+	"kick",
 
 	async (message: DiscordJS.Message) =>
 	{
 		if (VoteSystem.Poll.currentPoll === null)
 		{
-			VoteSystem.Poll.currentPoll = VoteSystem.Poll.startPoll(message, "unmute", (member: DiscordJS.GuildMember) => member.setMute(false), (2 / 3), true);
+			VoteSystem.Poll.currentPoll = VoteSystem.Poll.startPoll(message, "kick", (member: DiscordJS.GuildMember) => member.kick("This person was voted to be kicked"), (2 / 3), false);
 
 			if (VoteSystem.Poll.currentPoll !== null)
 			{

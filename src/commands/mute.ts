@@ -10,7 +10,7 @@ export = new Command
 	{
 		if (VoteSystem.Poll.currentPoll === null)
 		{
-			VoteSystem.Poll.currentPoll = VoteSystem.Poll.standardPoll(message, "mute", (member: DiscordJS.GuildMember) => member.setMute(true), (2 / 3));
+			VoteSystem.Poll.currentPoll = VoteSystem.Poll.startPoll(message, "mute", (member: DiscordJS.GuildMember) => member.setMute(true), (2 / 3), true);
 
 			if (VoteSystem.Poll.currentPoll !== null)
 			{
