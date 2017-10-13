@@ -291,7 +291,7 @@ namespace Poll
 					}
 				}
 				
-				Math.floor(userCount * fraction)
+				return Math.floor(userCount * fraction)
 			},
 			voiceChannel
 		);
