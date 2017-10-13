@@ -252,12 +252,22 @@ namespace Poll
 		}
 		
 		let userCount: number = 0;
+		let botCount: number = 0;
 		for (let member of server.members.array())
 		{
-			if (member.user.presence.status === "online")
+			if (member.user.presence.status === "online" && !member.user.bot === true)
 			{
 				userCount ++;
 			}
+			else if (member.user.bot === true)
+			{
+				botCount ++;
+			}
+		}
+		
+		if (userCount < (server.members.array().length - botCount) /2)
+		{
+			userCount = server.members.array().length - botCount;
 		}
 		
 		if (voicePoll)
