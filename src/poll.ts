@@ -265,7 +265,7 @@ namespace Poll
 			}
 		}
 		
-		if (userCount < (server.members.array().length - botCount) /2)
+		if (userCount < (server.members.array().length - botCount) * (2/3))
 		{
 			userCount = server.members.array().length - botCount;
 		}
