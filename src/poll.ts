@@ -251,29 +251,7 @@ namespace Poll
 			return null;
 		}
 		
-		let userCount: number = 0;
-		let botCount: number = 0;
-		for (let member of server.members.array())
-		{
-			if (member.user.presence.status === "online" && !member.user.bot === true)
-			{
-				userCount ++;
-			}
-			else if (member.user.bot === true)
-			{
-				botCount ++;
-			}
-		}
-		
-		if (userCount < (server.members.array().length - botCount) * (2/3))
-		{
-			userCount = server.members.array().length - botCount;
-		}
-		
-		if (voicePoll)
-		{
-			userCount = voiceChannel.members.array().length;
-		}else 
+		if (!voicePoll) 
 		{
 			voiceChannel = null;
 		}
@@ -285,7 +263,36 @@ namespace Poll
 
 			() => action(target),
 			() => (true),
-			() => Math.floor(userCount * fraction),
+			() => 
+			{
+				let userCount: number = 0;
+				if (voicePoll)
+				{
+					userCount = voiceChannel.members.array().length;
+				}
+				else
+				{
+					let botCount: number = 0;
+					for (let member of server.members.array())
+					{
+						if (member.user.presence.status === "online" && !member.user.bot === true)
+						{
+							userCount ++;
+						}
+						else if (member.user.bot === true)
+						{
+							botCount ++;
+						}
+					}
+					
+					if (userCount < (server.members.array().length - botCount) * (2/3))
+					{
+						userCount = server.members.array().length - botCount;
+					}
+				}
+				
+				Math.floor(userCount * fraction)
+			},
 			voiceChannel
 		);
 	}
