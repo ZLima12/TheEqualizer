@@ -37,8 +37,8 @@ class Poll
 	get Concluded(): boolean
 	{ return this.concluded }
 	
-	protected voiceChannel: () => DiscordJS.VoiceChannel;
-	get VoiceChannel(): () => DiscordJS.VoiceChannel
+	protected voiceChannel: DiscordJS.VoiceChannel;
+	get VoiceChannel(): DiscordJS.VoiceChannel
 	{ return this.voiceChannel }
 
 	constructor
@@ -48,7 +48,7 @@ class Poll
 		action: () => void,
 		valid: () => boolean,
 		votesNeeded: () => number,
-		voiceChannel: () => DiscordJS.VoiceChannel /** null if not needed */
+		voiceChannel: DiscordJS.VoiceChannel /** null if not needed */
 	)
 	{
 		this.message = message;
@@ -168,7 +168,7 @@ class Poll
 			return Command.ExitStatus.BadInvocation;
 		}
 		
-		if (this.voiceChannel() !== null && message.member.voiceChannel !== this.voiceChannel())
+		if (this.voiceChannel !== null && message.member.voiceChannel !== this.voiceChannel)
 		{
 			return Command.ExitStatus.NotInVoiceChannel;
 		}
@@ -276,7 +276,7 @@ namespace Poll
 			() => action(target),
 			() => (true),
 			() => Math.floor(userCount * fraction),
-			() => voiceChannel
+			voiceChannel
 		);
 	}
 
