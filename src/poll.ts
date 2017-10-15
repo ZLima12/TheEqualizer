@@ -36,7 +36,7 @@ class Poll
 	protected concluded: boolean;
 	get Concluded(): boolean
 	{ return this.concluded }
-	
+
 	protected voiceChannel: DiscordJS.VoiceChannel;
 	get VoiceChannel(): DiscordJS.VoiceChannel
 	{ return this.voiceChannel }
@@ -167,7 +167,7 @@ class Poll
 		{
 			return Command.ExitStatus.BadInvocation;
 		}
-		
+
 		if (this.voiceChannel !== null && message.member.voiceChannel !== this.voiceChannel)
 		{
 			return Command.ExitStatus.NotInVoiceChannel;
@@ -221,13 +221,13 @@ namespace Poll
 		let server: DiscordJS.Guild = message.guild;
 
 		let target: DiscordJS.GuildMember = null;
-		
+
 		if (voicePoll && message.member.voiceChannel === undefined)
 		{
 			message.reply("You must be in a voice channel to start this vote.");
 			return null;
 		}
-		
+
 		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
 
 		for (let member of server.members.array())
@@ -250,8 +250,8 @@ namespace Poll
 
 			return null;
 		}
-		
-		if (!voicePoll) 
+
+		if (!voicePoll)
 		{
 			voiceChannel = null;
 		}
@@ -263,7 +263,7 @@ namespace Poll
 
 			() => action(target),
 			() => (true),
-			() => 
+			() =>
 			{
 				let userCount: number = 0;
 				if (voicePoll)
@@ -284,13 +284,13 @@ namespace Poll
 							botCount++;
 						}
 					}
-					
+
 					if (userCount < (server.members.array().length - botCount) * (2/3))
 					{
 						userCount = server.members.array().length - botCount;
 					}
 				}
-				
+
 				return Math.floor(userCount * fraction)
 			},
 			voiceChannel
