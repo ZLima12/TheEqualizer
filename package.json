@@ -22,7 +22,9 @@
 	"dependencies": {
 		"@types/node": ">=8.0.25",
 		"discord.js": ">=11.0.0",
-		"typescript": ">=2.4.2"
+		"erlpack": "github:discordapp/erlpack",
+		"typescript": ">=2.4.2",
+		"uws": ">=8.14.1"
 	},
 	"scripts": {
 		"install": "tsc",
