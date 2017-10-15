@@ -155,6 +155,13 @@ class Poll
 			this.concluded = true;
 		}
 
+		else if (this.voteSum() >= this.votesNeeded())
+		{
+			this.action();
+			this.end("The poll to " + this.desc + " has concluded successfully!");
+			this.concluded = true;
+		}
+
 		else if (this.VoiceChannel === null)
 		{
 			let allMembers: Array<DiscordJS.GuildMember> = this.Message.guild.members.array();
@@ -174,13 +181,6 @@ class Poll
 			{
 				this.end("There are not enough users online to hold this poll.");
 			}
-		}
-
-		else if (this.voteSum() >= this.votesNeeded())
-		{
-			this.action();
-			this.end("The poll to " + this.desc + " has concluded successfully!");
-			this.concluded = true;
 		}
 	}
 
