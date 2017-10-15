@@ -122,9 +122,14 @@ class Poll
 		{
 			this.votes.set(this.message.author.id, new Vote(this.message.member, Vote.Type.Upvote));
 
+			this.check();
+			if (this.Concluded)
+			{
+				return;
+			}
+
 			this.send("A poll has been started to " + this.desc + '.');
 			this.sendStatus();
-			this.check();
 		}
 	}
 
@@ -133,6 +138,8 @@ class Poll
 		this.concluded = true;
 
 		this.send(message);
+
+		Poll.currentPoll = null;
 	}
 
 	check(): void
@@ -146,6 +153,27 @@ class Poll
 		{
 			this.send("The poll has been invalidated.");
 			this.concluded = true;
+		}
+
+		else if (this.VoiceChannel === null)
+		{
+			let allMembers: Array<DiscordJS.GuildMember> = this.Message.guild.members.array();
+
+			let onlineUserCount: number = 0;
+
+			for (let member of allMembers)
+			{
+				let presence = member.user.presence;
+				if (!member.user.bot && presence.status === "online")
+				{
+					onlineUserCount++;
+				}
+			}
+
+			if (this.VotesNeeded() > onlineUserCount)
+			{
+				this.end("There are not enough users online to hold this poll.");
+			}
 		}
 
 		else if (this.voteSum() >= this.votesNeeded())
@@ -222,15 +250,18 @@ namespace Poll
 
 		let target: DiscordJS.GuildMember = null;
 
-		if (voicePoll && message.member.voiceChannel === undefined)
+		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
+
+		if (voicePoll && voiceChannel === undefined)
 		{
 			message.reply("You must be in a voice channel to start this vote.");
 			return null;
 		}
 
-		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
+		let memberPool: Array<DiscordJS.GuildMember>;
+		memberPool = (voicePoll) ? voiceChannel.members.array() : server.members.array();
 
-		for (let member of server.members.array())
+		for (let member of memberPool)
 		{
 			if ("<@" + member.user.id + '>' === command[1] || "<@!" + member.user.id + '>' === command[1])
 			{
@@ -266,28 +297,28 @@ namespace Poll
 			() =>
 			{
 				let userCount: number = 0;
-				if (voicePoll)
+				let botCount: number = 0;
+
+				for (let member of memberPool)
 				{
-					userCount = voiceChannel.members.array().length;
-				}
-				else
-				{
-					let botCount: number = 0;
-					for (let member of server.members.array())
+					let presence = member.user.presence;
+
+					if (member.user.bot)
 					{
-						if (member.user.presence.status === "online" && !member.user.bot === true)
-						{
-							userCount++;
-						}
-						else if (member.user.bot === true)
-						{
-							botCount++;
-						}
+						botCount++;
 					}
 
-					if (userCount < (server.members.array().length - botCount) * (2/3))
+					else if (presence.status === "online")
 					{
-						userCount = server.members.array().length - botCount;
+						userCount++;
+					}
+				}
+
+				if (!voicePoll)
+				{
+					if (userCount < (memberPool.length - botCount) * (1/2))
+					{
+						userCount = memberPool.length - botCount;
 					}
 				}
 
