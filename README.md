@@ -14,3 +14,14 @@ As of now, the bot is nowhere near where I envision it in the future, but I supp
 This project is written in TypeScript and makes use of the [discord.js](https://discord.js.org) API.
 
 You will need `node.js` to run this bot, and if you decide to attempt to do so, you must create a new bot and define your auth code as `auth` in `options.json` (You must make this file yourself!). Before you can start the program, you must first run `npm install` to install dependencies and compile the TypeScript into JavaScript. You may then start the bot with `npm start`.
+
+### Options
+
+All options passed to the bot should be put in `options.json`. This file uses standard json syntax. You must create this file yourself. Here is a list of all supported options (as of now):
+
+Name | Type | Optional | Default | Description
+---- | ---- | -------- | ------- | -----------
+`auth` | `string` | No | None | The auth code for the bot.
+`motd` | `string` | Yes | None | The string that is displayed where Discord would normally put the game a user is playing.
+`biasAdmin` | `boolean` | Yes | `false` | If true, votes targeting users with the `Administrator` Discord permission will be invalidated.
+`ownerID` | `string` | Yes | None | The user ID of the bot owner. If not defined, you will not be able to use some commands (eval, destroy, ect.).
