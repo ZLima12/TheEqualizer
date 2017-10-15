@@ -1,7 +1,7 @@
 import * as DiscordJS from "discord.js";
 import Command from "./command";
 import Vote from "./vote";
-let options = require("../options");
+import Globals from "./globals";
 
 class Poll
 {
@@ -222,7 +222,7 @@ namespace Poll
 			{
 				target = member;
 
-				if (member.hasPermission("ADMINISTRATOR") && options.biasAdmin)
+				if (member.hasPermission("ADMINISTRATOR") && Globals.Options["biasAdmin"])
 				{
 					message.reply("No can do, all praise " + command[1] + '!');
 					return null;
