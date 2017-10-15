@@ -235,7 +235,8 @@ namespace Poll
 		desc: string,
 		action: (member: DiscordJS.GuildMember) => void,
 		fraction: number,
-		voicePoll: boolean
+		voicePoll: boolean,
+		minimumUserFraction: number = 0
 	): Poll
 	{
 		let command: Array<string> = message.content.split(' ');
@@ -316,7 +317,7 @@ namespace Poll
 
 				if (!voicePoll)
 				{
-					if (userCount < (memberPool.length - botCount) * (1/2))
+					if (userCount < (memberPool.length - botCount) * minimumUserFraction)
 					{
 						userCount = memberPool.length - botCount;
 					}

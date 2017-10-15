@@ -10,7 +10,7 @@ export = new Command
 	{
 		if (VoteSystem.Poll.currentPoll === null)
 		{
-			VoteSystem.Poll.currentPoll = VoteSystem.Poll.startPoll(message, "kick", (member: DiscordJS.GuildMember) => member.kick("This person was voted to be kicked"), (2 / 3), false);
+			VoteSystem.Poll.currentPoll = VoteSystem.Poll.startPoll(message, "kick", (member: DiscordJS.GuildMember) => member.kick("This person was voted to be kicked"), (2 / 3), false, (1/2));
 
 			if (VoteSystem.Poll.currentPoll !== null)
 			{
