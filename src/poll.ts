@@ -251,7 +251,7 @@ namespace Poll
 
 		let target: DiscordJS.GuildMember = null;
 
-		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
+		let voiceChannel: DiscordJS.VoiceChannel = (voicePoll) ? message.member.voiceChannel : null;
 
 		if (voicePoll && voiceChannel === undefined)
 		{
@@ -281,11 +281,6 @@ namespace Poll
 			message.reply("No user found by " + command[1] + '.');
 
 			return null;
-		}
-
-		if (!voicePoll)
-		{
-			voiceChannel = null;
 		}
 
 		return new Poll
