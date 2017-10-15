@@ -277,11 +277,11 @@ namespace Poll
 					{
 						if (member.user.presence.status === "online" && !member.user.bot === true)
 						{
-							userCount ++;
+							userCount++;
 						}
 						else if (member.user.bot === true)
 						{
-							botCount ++;
+							botCount++;
 						}
 					}
 					
