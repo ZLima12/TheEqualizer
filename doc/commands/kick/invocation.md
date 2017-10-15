@@ -1,0 +1,1 @@
+`=kick @SomeUser` - Begins a poll to kick SomeUser. Parameter must be a tag, not plaintext.

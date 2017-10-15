@@ -37,13 +37,18 @@ class Poll
 	get Concluded(): boolean
 	{ return this.concluded }
 
+	protected voiceChannel: DiscordJS.VoiceChannel;
+	get VoiceChannel(): DiscordJS.VoiceChannel
+	{ return this.voiceChannel }
+
 	constructor
 	(
 		message: DiscordJS.Message,
 		desc: string,
 		action: () => void,
 		valid: () => boolean,
-		votesNeeded: () => number
+		votesNeeded: () => number,
+		voiceChannel: DiscordJS.VoiceChannel /** null if not needed */
 	)
 	{
 		this.message = message;
@@ -54,6 +59,7 @@ class Poll
 		this.votesNeeded = votesNeeded;
 		this.votes = new Map<string, Vote>();
 		this.concluded = false;
+		this.voiceChannel = voiceChannel;
 	}
 
 	voteSum(): number
@@ -116,9 +122,14 @@ class Poll
 		{
 			this.votes.set(this.message.author.id, new Vote(this.message.member, Vote.Type.Upvote));
 
+			this.check();
+			if (this.Concluded)
+			{
+				return;
+			}
+
 			this.send("A poll has been started to " + this.desc + '.');
 			this.sendStatus();
-			this.check();
 		}
 	}
 
@@ -127,6 +138,8 @@ class Poll
 		this.concluded = true;
 
 		this.send(message);
+
+		Poll.currentPoll = null;
 	}
 
 	check(): void
@@ -148,6 +161,27 @@ class Poll
 			this.end("The poll to " + this.desc + " has concluded successfully!");
 			this.concluded = true;
 		}
+
+		else if (this.VoiceChannel === null)
+		{
+			let allMembers: Array<DiscordJS.GuildMember> = this.Message.guild.members.array();
+
+			let onlineUserCount: number = 0;
+
+			for (let member of allMembers)
+			{
+				let presence = member.user.presence;
+				if (!member.user.bot && presence.status === "online")
+				{
+					onlineUserCount++;
+				}
+			}
+
+			if (this.VotesNeeded() > onlineUserCount)
+			{
+				this.end("There are not enough users online to hold this poll.");
+			}
+		}
 	}
 
 	vote(message: DiscordJS.Message): Command.ExitStatus
@@ -160,6 +194,11 @@ class Poll
 		if (command.length !== 2 || voteType === undefined)
 		{
 			return Command.ExitStatus.BadInvocation;
+		}
+
+		if (this.voiceChannel !== null && message.member.voiceChannel !== this.voiceChannel)
+		{
+			return Command.ExitStatus.NotInVoiceChannel;
 		}
 
 		if (this.votes.get(message.author.id) !== undefined)
@@ -190,12 +229,14 @@ namespace Poll
 {
 	export var currentPoll: Poll = null;
 
-	export function standardPoll
+	export function startPoll
 	(
 		message: DiscordJS.Message,
 		desc: string,
 		action: (member: DiscordJS.GuildMember) => void,
-		fraction: number
+		fraction: number,
+		voicePoll: boolean,
+		minimumUserFraction: number = 0
 	): Poll
 	{
 		let command: Array<string> = message.content.split(' ');
@@ -206,17 +247,22 @@ namespace Poll
 			return null;
 		}
 
-		if (message.member.voiceChannel === undefined)
+		let server: DiscordJS.Guild = message.guild;
+
+		let target: DiscordJS.GuildMember = null;
+
+		let voiceChannel: DiscordJS.VoiceChannel = (voicePoll) ? message.member.voiceChannel : null;
+
+		if (voicePoll && voiceChannel === undefined)
 		{
 			message.reply("You must be in a voice channel to start this vote.");
 			return null;
 		}
 
-		let voiceChannel: DiscordJS.VoiceChannel = message.member.voiceChannel;
+		let memberPool: Array<DiscordJS.GuildMember>;
+		memberPool = (voicePoll) ? voiceChannel.members.array() : server.members.array();
 
-		let target: DiscordJS.GuildMember = null;
-
-		for (let member of voiceChannel.members.array())
+		for (let member of memberPool)
 		{
 			if ("<@" + member.user.id + '>' === command[1] || "<@!" + member.user.id + '>' === command[1])
 			{
@@ -243,10 +289,41 @@ namespace Poll
 			desc + ' ' + command[1],
 
 			() => action(target),
-			() => (target.voiceChannelID === message.member.voiceChannelID),
-			() => Math.floor(voiceChannel.members.array().length * fraction)
+			() => (true),
+			() =>
+			{
+				let userCount: number = 0;
+				let botCount: number = 0;
+
+				for (let member of memberPool)
+				{
+					let presence = member.user.presence;
+
+					if (member.user.bot)
+					{
+						botCount++;
+					}
+
+					else if (presence.status === "online")
+					{
+						userCount++;
+					}
+				}
+
+				if (!voicePoll)
+				{
+					if (userCount < (memberPool.length - botCount) * minimumUserFraction)
+					{
+						userCount = memberPool.length - botCount;
+					}
+				}
+
+				return Math.floor(userCount * fraction)
+			},
+			voiceChannel
 		);
 	}
+
 }
 
 export default Poll;
