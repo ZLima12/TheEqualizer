@@ -9,8 +9,7 @@ import ConnectionUtils from "./connection-utils";
 Command.loadCommandsSync();
 EventHandler.loadHandlersSync();
 
-let options = require("../options");
-Globals.Options = options;
+Globals.Options = require("../options");
 
 let client = new DiscordJS.Client();
 Globals.ClientInstance = client;

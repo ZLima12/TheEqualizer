@@ -1,6 +1,6 @@
 import Command from "../command";
 import * as DiscordJS from "discord.js";
-let options = require("../../options");
+import Globals from "../globals";
 
 export = new Command
 (
@@ -12,7 +12,7 @@ export = new Command
 		if (message.content.indexOf(' ') == -1)
 			return Command.ExitStatus.BadInvocation;
 
-		if (message.author.id === options.ownerID)
+		if (message.author.id === Globals.Options["ownerID"])
 		{
 			let result;
 			message.channel.startTyping();
