@@ -289,7 +289,7 @@ namespace Poll
 			desc + ' ' + command[1],
 
 			() => action(target),
-			() => (true),
+			() => (voicePoll ? (target.voiceChannelID === message.member.voiceChannelID) : true),
 			() =>
 			{
 				let userCount: number = 0;
