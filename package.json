@@ -4,7 +4,7 @@
 	"description": "A Discord Bot Built For Democracy",
 	"homepage": "https://github.com/ZLima12/TheEqualizer",
 	"private": true,
-	"main": "js/theEqualizer.js",
+	"main": "js/the-equalizer.js",
 	"author": {
 		"name": "John Leuenhagen",
 		"email": "john@zlima12.com",
@@ -14,10 +14,6 @@
 		"discord",
 		"bot",
 		"discord.js"
-	],
-	"files": [
-		"src/the-equalizer.ts",
-		"src/vote.ts"
 	],
 	"dependencies": {
 		"@types/node": ">=8.0.25",
