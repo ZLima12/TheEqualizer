@@ -1,10 +1,12 @@
 import * as DiscordJS from "discord.js";
+import Globals from "./globals";
 
 namespace Moderation
 {
 	export namespace DoNotDisturb
 	{
 		let previousChannel: Map<DiscordJS.Snowflake, DiscordJS.GuildChannel> = new Map<DiscordJS.Snowflake, DiscordJS.GuildChannel>();
+		let timerID;
 
 		export function shouldBeMoved(user: DiscordJS.GuildMember): boolean
 		{
@@ -126,6 +128,28 @@ namespace Moderation
 			}
 
 			return movedMembers;
+		}
+
+		export function checkAllGuilds(): void
+		{
+			DoNotDisturb.moveAllAfkToDnd(Globals.ClientInstance.guilds.array());
+			DoNotDisturb.verifyAllPreviousChannelEntries();
+		}
+
+		export function startCheckTimer(frequency: number)
+		{
+			if (timerID !== undefined)
+			{
+				clearInterval(timerID);
+			}
+			
+			timerID = setInterval(DoNotDisturb.checkAllGuilds, frequency);
+		}
+
+		export function stopCheckTimer()
+		{
+			clearInterval(timerID);
+			timerID = undefined;
 		}
 	}
 }

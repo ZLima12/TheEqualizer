@@ -16,15 +16,6 @@ Globals.ClientInstance = client;
 
 EventHandler.setHandlersSync(client);
 
-let dndTimerID = setInterval
-(
-	() =>
-	{
-		Moderation.DoNotDisturb.moveAllAfkToDnd(client.guilds.array());
-		Moderation.DoNotDisturb.verifyAllPreviousChannelEntries();
-	},
-
-	2000
-);
+Moderation.DoNotDisturb.startCheckTimer(2000);
 
 ConnectionUtils.loginLoop();
