@@ -1,21 +1,10 @@
 import * as DiscordJS from "discord.js";
-import EventHandler from "./event-handler";
-import Command from "./command";
-import * as VoteSystem from "./vote-system";
-import Moderation from "./moderation";
 import Globals from "./globals";
 import ConnectionUtils from "./connection-utils";
+import Load from "./load";
 
-Command.loadCommandsSync();
-EventHandler.loadHandlersSync();
+Globals.ClientInstance = new DiscordJS.Client();
 
-Globals.Options = require("../options");
-
-let client = new DiscordJS.Client();
-Globals.ClientInstance = client;
-
-EventHandler.setHandlersSync(client);
-
-Moderation.DoNotDisturb.startCheckTimer(2000);
+Load();
 
 ConnectionUtils.loginLoop();
