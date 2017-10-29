@@ -25,3 +25,11 @@ Name | Type | Optional | Default | Description
 `motd` | `string` | Yes | None | The string that is displayed where Discord would normally put the game a user is playing.
 `biasAdmin` | `boolean` | Yes | `false` | If true, votes targeting users with the `Administrator` Discord permission will be invalidated.
 `ownerID` | `string` | Yes | None | The user ID of the bot owner. If not defined, you will not be able to use some commands (eval, destroy, ect.).
+
+Your file should look like this:
+```
+{
+	"auth": "XXXXXXXXXXXXX",
+	"anotherOption": "value" // Example
+}
+```
