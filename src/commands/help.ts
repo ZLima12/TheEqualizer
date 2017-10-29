@@ -9,8 +9,9 @@ export = new Command
 	async (message: DiscordJS.Message) =>
 	{
 		let command: Array<string> = Command.messageToArray(message);
-		let commandName: string = undefined;
-		let doc: Documentation = undefined;
+		let commandName: string;
+		let doc: Documentation;
+
 		switch (command.length)
 		{
 			case 1:
@@ -32,7 +33,7 @@ export = new Command
 
 			case 3:
 				commandName = command[1].toLowerCase();
-				let resource: string = undefined;
+				let resource: string;
 
 				if (Command.SupportedCommands.indexOf(commandName) === -1)
 					return Command.ExitStatus.BadInvocation;

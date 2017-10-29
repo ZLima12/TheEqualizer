@@ -16,8 +16,6 @@ export default class Documentation
 
 	constructor(commandName: string)
 	{
-		this.description = undefined;
-		this.invocation = undefined;
 		this.command = commandName;
 	}
 

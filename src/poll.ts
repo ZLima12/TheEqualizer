@@ -227,7 +227,7 @@ class Poll
 
 namespace Poll
 {
-	export var currentPoll: Poll = null;
+	export let currentPoll: Poll = null;
 
 	export function startPoll
 	(

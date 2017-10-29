@@ -59,7 +59,7 @@ namespace Command
 		return command;
 	}
 
-	export var loadedCommands: Map<string, Command> = new Map<string, Command>();
+	export let loadedCommands: Map<string, Command> = new Map<string, Command>();
 
 	async function loadCommand(name: string): Promise<void>
 	{

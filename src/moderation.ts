@@ -142,7 +142,7 @@ namespace Moderation
 			{
 				clearInterval(timerID);
 			}
-			
+
 			timerID = setInterval(DoNotDisturb.checkAllGuilds, frequency);
 		}
 

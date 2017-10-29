@@ -2,8 +2,8 @@ import { Client } from "discord.js";
 
 namespace Globals
 {
-	export let ClientInstance: Client = undefined;
-	export let Options: object = undefined;
+	export let ClientInstance: Client;
+	export let Options: object;
 }
 
 export default Globals;
