@@ -61,10 +61,24 @@ namespace Command
 
 	export var loadedCommands: Map<string, Command> = new Map<string, Command>();
 
-	export function loadCommandsSync(): void
+	async function loadCommand(name: string): Promise<void>
 	{
+		Command.loadedCommands.set(name, require("./commands/" + name));
+	}
+
+	export async function loadCommands(): Promise<void>
+	{
+		let promises: Array<Promise<void>> = new Array<Promise<void>>();
+
 		for (let command of Command.SupportedCommands)
-			Command.loadedCommands.set(command, require("./commands/" + command));
+		{
+			promises.push(loadCommand(command));
+		}
+
+		for (let promise of promises)
+		{
+			await promise;
+		}
 	}
 
 	export async function runCommand(message: DiscordJS.Message): Promise<Command.ExitStatus>

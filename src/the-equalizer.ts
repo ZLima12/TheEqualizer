@@ -5,6 +5,4 @@ import Load from "./load";
 
 Globals.ClientInstance = new DiscordJS.Client();
 
-Load();
-
-ConnectionUtils.loginLoop();
+Load().then(ConnectionUtils.loginLoop);

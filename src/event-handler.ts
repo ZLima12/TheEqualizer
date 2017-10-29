@@ -29,13 +29,27 @@ namespace EventHandler
 		"message"
 	];
 
-	export function loadHandlersSync(): void
+	async function loadHandler(name: string): Promise<void>
 	{
-		for (let event of EventHandler.SupportedEvents)
-			EventHandler.loadedHandlers.set(event, require("./handlers/" + event));
+		EventHandler.loadedHandlers.set(name, require("./handlers/" + name));
 	}
 
-	export function setHandlersSync(client: DiscordJS.Client): void
+	export async function loadHandlers(): Promise<void>
+	{
+		let promises: Array<Promise<void>> = new Array<Promise<void>>();
+
+		for (let event of EventHandler.SupportedEvents)
+		{
+			promises.push(loadHandler(event));
+		}
+
+		for (let promise of promises)
+		{
+			await promise;
+		}
+	}
+
+	export function setHandlers(client: DiscordJS.Client): void
 	{
 		for (let [event, handler] of EventHandler.loadedHandlers)
 			client.on(event, handler.Action);
