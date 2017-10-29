@@ -1,6 +1,6 @@
 import EventHandler from "../event-handler";
 import * as DiscordJS from "discord.js";
-import * as VoteSystem from "../vote-system";
+import Poll from "../poll";
 import Moderation from "../moderation";
 
 export = new EventHandler
@@ -9,11 +9,11 @@ export = new EventHandler
 
 	(oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
 	{
-		if (VoteSystem.Poll.currentPoll !== null)
+		if (Poll.currentPoll !== null)
 		{
-			VoteSystem.Poll.currentPoll.check();
-			if (VoteSystem.Poll.currentPoll.Concluded)
-				VoteSystem.Poll.currentPoll = null;
+			Poll.currentPoll.check();
+			if (Poll.currentPoll.Concluded)
+				Poll.currentPoll = null;
 		}
 
 		if (Moderation.DoNotDisturb.moveUserIfAfk(newMember)) return;

@@ -1,6 +1,6 @@
 import Command from "../command";
 import * as DiscordJS from "discord.js";
-import * as VoteSystem from "../vote-system";
+import Poll from "../poll";
 
 export = new Command
 (
@@ -8,13 +8,13 @@ export = new Command
 
 	async (message: DiscordJS.Message) =>
 	{
-		if (VoteSystem.Poll.currentPoll === null)
+		if (Poll.currentPoll === null)
 		{
-			VoteSystem.Poll.currentPoll = VoteSystem.Poll.startPoll(message, "unmute", (member: DiscordJS.GuildMember) => member.setMute(false), (2 / 3), true);
+			Poll.currentPoll = Poll.startPoll(message, "unmute", (member: DiscordJS.GuildMember) => member.setMute(false), (2 / 3), true);
 
-			if (VoteSystem.Poll.currentPoll !== null)
+			if (Poll.currentPoll !== null)
 			{
-				VoteSystem.Poll.currentPoll.start();
+				Poll.currentPoll.start();
 				return Command.ExitStatus.Success;
 			}
 
