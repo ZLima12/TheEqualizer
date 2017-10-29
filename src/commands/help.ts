@@ -49,6 +49,9 @@ export = new Command
 				message.reply((isDescription ? "Description" : "Invocation") + " of " + commandName + ":\n" + (isDescription ? doc.Description : doc.Invocation));
 
 				break;
+
+			default:
+				return Command.ExitStatus.BadInvocation;
 		}
 
 		return Command.ExitStatus.Success;
