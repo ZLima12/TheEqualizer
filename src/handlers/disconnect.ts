@@ -1,6 +1,5 @@
 import EventHandler from "../event-handler";
 import Globals from "../globals";
-import ConnectionUtils from "../connection-utils";
 
 export = new EventHandler
 (
@@ -13,7 +12,7 @@ export = new EventHandler
 
 		setTimeout
 		(
-			() => ConnectionUtils.loginLoop(),
+			() => Globals.ClientInstance.loginLoop(),
 
 			500
 		);

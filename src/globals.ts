@@ -1,8 +1,8 @@
-import { Client } from "discord.js";
+import EqualizerClient from "./client";
 
 namespace Globals
 {
-	export let ClientInstance: Client;
+	export let ClientInstance: EqualizerClient;
 	export let Options: object;
 }
 

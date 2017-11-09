@@ -1,8 +1,7 @@
-import * as DiscordJS from "discord.js";
 import Globals from "./globals";
-import ConnectionUtils from "./connection-utils";
 import Load from "./load";
+import EqualizerClient from "./client";
 
-Globals.ClientInstance = new DiscordJS.Client();
+Globals.ClientInstance = new EqualizerClient();
 
-Load().then(ConnectionUtils.loginLoop);
+Load().then(() => Globals.ClientInstance.loginLoop());
