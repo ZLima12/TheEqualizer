@@ -8,7 +8,7 @@ export = new EventHandler
 
 	(message: DiscordJS.Message) =>
 	{
-		if (message.author.id !== message.client.user.id)
+		if (!message.author.bot)
 		{
 			if (message.channel.type !== "text")
 			{
