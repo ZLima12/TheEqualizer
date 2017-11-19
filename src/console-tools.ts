@@ -15,7 +15,7 @@ namespace ConsoleTools
 				{
 					clientID = Globals.ClientInstance.user.id;
 
-					console.log("To add this bot to a server, go to https://discordapp.com/oauth2/authorize?&client_id=" + clientID + "&scope=bot&permissions=0");
+					console.log("To add this bot to a server, go to https://discordapp.com/oauth2/authorize?&client_id=" + clientID + "&scope=bot&permissions=40");
 				}
 			}
 		}
