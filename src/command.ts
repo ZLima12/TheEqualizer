@@ -54,7 +54,18 @@ namespace Command
 
 	export function messageToArray(message: DiscordJS.Message): Array<string>
 	{
-		let command: Array<string> = message.content.split(' ');
+		let command: Array<string> = new Array<string>();
+		for (let line of message.content.split('\n'))
+		{
+			if (line.length > 1)
+			{
+				for (let word of line.split(" "))
+				{
+					command.push(word);
+				}
+			}
+		}
+
 		command[0] = command[0].substring(1);
 		return command;
 	}

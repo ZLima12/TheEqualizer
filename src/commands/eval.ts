@@ -18,7 +18,7 @@ export = new Command
 			message.channel.startTyping();
 			try
 			{
-				result = eval(message.content.substring(message.content.indexOf(' ') + 1));
+				result = eval(command.slice(1).join(" "));
 			}
 
 			catch (e)
