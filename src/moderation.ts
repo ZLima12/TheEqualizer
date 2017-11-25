@@ -24,10 +24,8 @@ namespace Moderation
 
 		export function getDndChannel(guild: DiscordJS.Guild): DiscordJS.GuildChannel
 		{
-			for (let pair of guild.channels)
+			for (let channel of guild.channels.values())
 			{
-				let channel: DiscordJS.GuildChannel = pair[1];
-
 				if (channel.name === "Do Not Disturb")
 				{
 					return channel;
