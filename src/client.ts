@@ -1,10 +1,10 @@
 import { Client as DJSClient } from "discord.js";
 import Globals from "./globals";
-import * as BotListStats from "./bot-list-stats"
+import { DiscordPWStatsManager } from "./bot-list-stats"
 
 class EqualizerClient extends DJSClient
 {
-	private pwStatsManager: BotListStats.DiscordPWStatsManager;
+	private pwStatsManager: DiscordPWStatsManager;
 
 	public constructor()
 	{
@@ -14,7 +14,7 @@ class EqualizerClient extends DJSClient
 
 		if (pwAuth)
 		{
-			this.pwStatsManager = new BotListStats.DiscordPWStatsManager(pwAuth, this);
+			this.pwStatsManager = new DiscordPWStatsManager(pwAuth, this);
 			this.pwStatsManager.postEvery(5 * 60 * 1000);
 			this.on("guildCreate", () => this.pwStatsManager.postStats());
 			this.on("guildDelete", () => this.pwStatsManager.postStats());
