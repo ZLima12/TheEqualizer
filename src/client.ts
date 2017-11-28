@@ -1,26 +1,36 @@
 import { Client as DJSClient } from "discord.js";
 import Globals from "./globals";
-import { DiscordPWStatsManager } from "./bot-list-stats"
+import { DiscordPWStatsManager } from "./bot-list-stats";
+import { Manager as EventManager } from "./event";
 
 class EqualizerClient extends DJSClient
 {
 	private pwStatsManager: DiscordPWStatsManager;
 
+	private eventManager: EventManager;
+
 	public constructor()
 	{
 		super();
 
-		let pwAuth: string = Globals.Options["discordPwAuth"];
-
-		if (pwAuth)
+		// Bot stats setup
 		{
-			this.pwStatsManager = new DiscordPWStatsManager(pwAuth, this);
-			this.pwStatsManager.postEvery(5 * 60 * 1000);
-			this.on("guildCreate", () => this.pwStatsManager.postStats());
-			this.on("guildDelete", () => this.pwStatsManager.postStats());
+			let pwAuth: string = Globals.Options["discordPwAuth"];
+
+			if (pwAuth)
+			{
+				this.pwStatsManager = new DiscordPWStatsManager(pwAuth, this);
+				this.pwStatsManager.postEvery(5 * 60 * 1000);
+				this.on("guildCreate", () => this.pwStatsManager.postStats());
+				this.on("guildDelete", () => this.pwStatsManager.postStats());
+			}
+
+			else this.pwStatsManager = null;
 		}
 
-		else this.pwStatsManager = null;
+		this.eventManager = new EventManager("./handlers");
+
+		this.eventManager.loadHandlers().then(() => this.eventManager.setHandlers(this));
 	}
 
 	/**

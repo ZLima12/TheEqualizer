@@ -1,18 +1,18 @@
-import EventHandler from "../event-handler";
-import Globals from "../globals";
+import { Handler } from "../event";
+import EqualizerClient from "../client";
 
-export = new EventHandler
+export = new Handler
 (
 	"disconnect",
 
-	() =>
+	(client: EqualizerClient) =>
 	{
 		console.log("Bot disconnected, destroying and reconnecting...");
-		Globals.ClientInstance.destroy();
+		client.destroy();
 
 		setTimeout
 		(
-			() => Globals.ClientInstance.loginLoop(),
+			() => client.loginLoop(),
 
 			500
 		);

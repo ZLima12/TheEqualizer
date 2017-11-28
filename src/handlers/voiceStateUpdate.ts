@@ -1,13 +1,14 @@
-import EventHandler from "../event-handler";
+import { Handler } from "../event";
 import * as DiscordJS from "discord.js";
+import EqualizerClient from "../client";
 import Poll from "../poll";
 import Moderation from "../moderation";
 
-export = new EventHandler
+export = new Handler
 (
 	"voiceStateUpdate",
 
-	(oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
+	(client: EqualizerClient, oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
 	{
 		if (Poll.currentPoll !== null)
 		{

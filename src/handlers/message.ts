@@ -1,12 +1,13 @@
-import EventHandler from "../event-handler";
+import { Handler } from "../event";
 import * as DiscordJS from "discord.js";
+import EqualizerClient from "../client";
 import Command from "../command";
 
-export = new EventHandler
+export = new Handler
 (
 	"message",
 
-	(message: DiscordJS.Message) =>
+	(client: EqualizerClient, message: DiscordJS.Message) =>
 	{
 		if (!message.author.bot)
 		{

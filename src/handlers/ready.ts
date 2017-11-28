@@ -1,15 +1,16 @@
-import EventHandler from "../event-handler";
+import { Handler } from "../event";
 import Globals from "../globals";
+import EqualizerClient from "../client";
 import ConsoleTools from "../console-tools";
 
-export = new EventHandler
+export = new Handler
 (
 	"ready",
 
-	() =>
+	(client: EqualizerClient) =>
 	{
 		console.log("Ready!");
-		Globals.ClientInstance.user.setGame(Globals.Options["motd"]);
+		client.user.setGame(Globals.Options["motd"]);
 
 		ConsoleTools.printJoinURL();
 	}
