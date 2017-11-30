@@ -86,7 +86,7 @@ export class Manager
 						for (let file of files)
 						{
 							const filePath: string = Path.join(this.HandlersLocation, file);
-							promises.push(this.loadHandler(filePath));
+							if (filePath.endsWith(".js")) promises.push(this.loadHandler(filePath));
 						}
 
 						for (let promise of promises)
