@@ -10,11 +10,11 @@ export = new Handler
 
 	(client: EqualizerClient, oldMember: DiscordJS.GuildMember, newMember: DiscordJS.GuildMember) =>
 	{
-		if (Poll.currentPoll !== null)
+		if (Poll.currentPoll.get(newMember.guild.id))
 		{
-			Poll.currentPoll.check();
-			if (Poll.currentPoll.Concluded)
-				Poll.currentPoll = null;
+			Poll.currentPoll.get(newMember.guild.id).check();
+			if (Poll.currentPoll.get(newMember.guild.id).Concluded)
+				Poll.currentPoll.delete(newMember.guild.id);
 		}
 
 		if (Moderation.DoNotDisturb.moveUserIfAfk(newMember)) return;

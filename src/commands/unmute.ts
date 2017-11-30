@@ -8,13 +8,13 @@ export = new Command
 
 	async (message: DiscordJS.Message) =>
 	{
-		if (Poll.currentPoll === null)
+		if (!Poll.currentPoll.get(message.guild.id))
 		{
-			Poll.currentPoll = Poll.startPoll(message, "unmute", (member: DiscordJS.GuildMember) => member.setMute(false), (2 / 3), true);
+			Poll.currentPoll.set(message.guild.id, Poll.startPoll(message, "unmute", (member: DiscordJS.GuildMember) => member.setMute(false), (2 / 3), true));
 
-			if (Poll.currentPoll !== null)
+			if (Poll.currentPoll.get(message.guild.id))
 			{
-				Poll.currentPoll.start();
+				Poll.currentPoll.get(message.guild.id).start();
 				return Command.ExitStatus.Success;
 			}
 

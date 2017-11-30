@@ -8,13 +8,13 @@ export = new Command
 
 	async (message: DiscordJS.Message) =>
 	{
-		if (Poll.currentPoll === null)
+		if (!Poll.currentPoll.get(message.guild.id))
 		{
-			Poll.currentPoll = Poll.startPoll(message, "kick", (member: DiscordJS.GuildMember) => member.kick("This person was voted to be kicked"), (2 / 3), false, (1/2));
+			Poll.currentPoll.set(message.guild.id, Poll.startPoll(message, "kick", (member: DiscordJS.GuildMember) => member.kick("This person was voted to be kicked"), (2 / 3), false, (1/2)));
 
-			if (Poll.currentPoll !== null)
+			if (Poll.currentPoll.get(message.guild.id))
 			{
-				Poll.currentPoll.start();
+				Poll.currentPoll.get(message.guild.id).start();
 				return Command.ExitStatus.Success;
 			}
 

@@ -10,20 +10,20 @@ export = new Command
 	{
 		let command: Array<string> = Command.messageToArray(message);
 
-		if (Poll.currentPoll === null || !Poll.currentPoll.underway())
+		if (!Poll.currentPoll.get(message.guild.id) || !Poll.currentPoll.get(message.guild.id).underway())
 		{
 			message.reply("There is currently no poll being run.");
 			return Command.ExitStatus.BadInvocation;
 		}
 
-		if (message.author.id === Poll.currentPoll.Author.id || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
+		if (message.author.id === Poll.currentPoll.get(message.guild.id).Author.id || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
 		{
-			Poll.currentPoll.send("The vote to " + Poll.currentPoll.Description + " has been canceled.");
-			Poll.currentPoll = null;
+			Poll.currentPoll.get(message.guild.id).send("The vote to " + Poll.currentPoll.get(message.guild.id).Description + " has been canceled.");
+			Poll.currentPoll.delete(message.guild.id);
 			return Command.ExitStatus.Success;
 		}
 
-		message.reply("No can do. Only " + Poll.currentPoll.Author.user.username + " can cancel the current vote.");
+		message.reply("No can do. Only " + Poll.currentPoll.get(message.guild.id).Author.user.username + " can cancel the current vote.");
 
 		return Command.ExitStatus.BadInvocation;
 	}

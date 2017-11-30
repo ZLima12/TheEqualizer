@@ -8,7 +8,7 @@ export = new Command
 
 	async (message: DiscordJS.Message) =>
 	{
-		if (Poll.currentPoll === null || !Poll.currentPoll.underway())
+		if (!Poll.currentPoll.get(message.guild.id) || !Poll.currentPoll.get(message.guild.id).underway())
 		{
 			message.reply("There is currently no vote being run.");
 			return Command.ExitStatus.BadInvokeNoReply;
@@ -16,10 +16,10 @@ export = new Command
 
 		else
 		{
-			let exitStatus: Command.ExitStatus = Poll.currentPoll.vote(message);
+			let exitStatus: Command.ExitStatus = Poll.currentPoll.get(message.guild.id).vote(message);
 
-			if (Poll.currentPoll.Concluded)
-				Poll.currentPoll = null;
+			if (Poll.currentPoll.get(message.guild.id).Concluded)
+				Poll.currentPoll.delete(message.guild.id);
 
 			return exitStatus;
 		}

@@ -139,7 +139,7 @@ class Poll
 
 		this.send(message);
 
-		Poll.currentPoll = null;
+		Poll.currentPoll.delete(this.Message.guild.id);
 	}
 
 	check(): void
@@ -227,7 +227,7 @@ class Poll
 
 namespace Poll
 {
-	export let currentPoll: Poll = null;
+	export const currentPoll: Map<DiscordJS.Snowflake, Poll> = new Map<DiscordJS.Snowflake, Poll>();
 
 	export function startPoll
 	(
