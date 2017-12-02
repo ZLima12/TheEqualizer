@@ -11,10 +11,7 @@ export = new Command
 		for (let command of Command.SupportedCommands)
 			commandList += '`' + command + "`\n";
 
-		if (commandList.endsWith('\n'))
-			commandList = commandList.substring(0, commandList.length - 1);
-
-		message.reply("Here is the list of all supported commands:\n" + commandList + "\nTo learn more about any command, use the `help` command.");
+		message.reply("Here is the list of all supported commands:\n" + commandList.trim() + "\nTo learn more about any command, use the `help` command.");
 		return Command.ExitStatus.Success;
 	}
 );
