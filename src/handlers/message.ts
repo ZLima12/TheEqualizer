@@ -14,10 +14,9 @@ export = new Handler
 			if (message.channel.type !== "text")
 			{
 				message.reply("Sorry, but I can only be used in servers.");
-				return;
 			}
 
-			if (message.content.startsWith('='))
+			else if (message.content.startsWith('='))
 			{
 				Command.runCommand(message);
 			}
