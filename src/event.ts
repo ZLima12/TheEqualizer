@@ -1,6 +1,5 @@
 import EqualizerClient from "./client";
 import * as Path from "path";
-import * as FS from "fs";
 import { ObjectDirectory } from "./object-directory";
 
 export class Handler
@@ -19,7 +18,7 @@ export class Handler
 	 * @param event - The event to handle.
 	 * @param action - The function to be run when the event is emitted.
 	 */
-	constructor(event: string, action: (client: EqualizerClient, ...handlerArgs) => void)
+	public constructor(event: string, action: (client: EqualizerClient, ...handlerArgs) => void)
 	{
 		this.event = event;
 		this.action = action;
