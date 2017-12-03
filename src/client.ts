@@ -30,7 +30,7 @@ class EqualizerClient extends DJSClient
 
 		this.eventManager = new EventManager("./handlers");
 
-		this.eventManager.loadHandlers().then(() => this.eventManager.setHandlers(this));
+		this.eventManager.loadFromDirectory().then(() => this.eventManager.setHandlers(this));
 	}
 
 	/**

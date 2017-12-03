@@ -1,6 +1,7 @@
 import EqualizerClient from "./client";
 import * as Path from "path";
 import * as FS from "fs";
+import { ObjectDirectory } from "./object-directory";
 
 export class Handler
 {
@@ -34,71 +35,42 @@ export class Handler
 	}
 }
 
-export class Manager
+export class Manager extends ObjectDirectory<Handler | Array<Handler>>
 {
-	private readonly loadedHandlers: Map<string, Handler>;
-
-	private readonly handlersLocation: string;
-
-	/**
-	 * The directory containing the [Handlers]{@link Handler}. (absolute path)
-	 */
-	public get HandlersLocation(): string
-	{ return this.handlersLocation; }
-
+	private readonly handlers: Map<string, Array<Handler>>;
 	/**
 	 * @param handlersLocation - The directory containing [Handlers]{@link Handler}. (relative to event.ts).
 	 */
 	public constructor(handlersLocation: string)
 	{
-		this.loadedHandlers = new Map<string, Handler>();
-		this.handlersLocation = Path.resolve(Path.join(__dirname, handlersLocation));
+		super(Path.join(__dirname, handlersLocation), false);
+		this.handlers = new Map<string, Array<Handler>>();
 	}
 
 	/**
-	 * Loads a {@link Handler} from HandlersLocation.
-	 * @param path - The path of the {@link Handler}.
+	 * Updates this.handlers to reflect objects in this.LoadedObjects.
 	 */
-	private async loadHandler(path: string): Promise<void>
+	private mapHandlers(): void
 	{
-		this.loadedHandlers.set(path, require(path));
-	}
+		for (const obj of this.LoadedObjects)
+		{
+			const handlerArr = (obj instanceof Array) ? obj : [obj];
 
-	/**
-	 * Loads all [Handlers]{@link Handler} in HandlersLocation.
-	 */
-	public async loadHandlers(): Promise<void>
-	{
-		return new Promise<void>
-		(
-			(resolve, reject) =>
+			for (let handler of handlerArr)
 			{
-				FS.readdir
-				(
-					this.HandlersLocation,
-					{ },
-					async (err: NodeJS.ErrnoException, files: Array<string>) =>
-					{
-						if (err) reject(err);
+				if (!this.handlers.get(handler.Event)) this.handlers.set(handler.Event, new Array<Handler>());
 
-						let promises: Array<Promise<void>> = new Array<Promise<void>>();
-
-						for (let file of files)
-						{
-							const filePath: string = Path.join(this.HandlersLocation, file);
-							if (filePath.endsWith(".js")) promises.push(this.loadHandler(filePath));
-						}
-
-						for (let promise of promises)
-						{
-							await promise;
-						}
-
-						resolve();
-					}
-				);
+				this.handlers.get(handler.Event).push(handler);
 			}
-		);
+		}
+	}
+
+	/**
+	 * Load all [Handlers]{@link Handler} from this.Directory.
+	 */
+	public async loadFromDirectory(): Promise<void>
+	{
+		return super.loadFromDirectory().then(() => this.mapHandlers());
 	}
 
 	/**
@@ -107,9 +79,12 @@ export class Manager
 	 */
 	public setHandlers(client: EqualizerClient): void
 	{
-		for (const handler of this.loadedHandlers.values())
+		for (const handlerArr of this.handlers.values())
 		{
-			handler.set(client);
+			for (const handler of handlerArr)
+			{
+				handler.set(client);
+			}
 		}
 	}
 }
