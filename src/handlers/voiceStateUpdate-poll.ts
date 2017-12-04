@@ -12,8 +12,6 @@ export = new Handler
 		if (Poll.currentPoll.get(newMember.guild.id))
 		{
 			Poll.currentPoll.get(newMember.guild.id).check();
-			if (Poll.currentPoll.get(newMember.guild.id).Concluded)
-				Poll.currentPoll.delete(newMember.guild.id);
 		}
 	}
 );
