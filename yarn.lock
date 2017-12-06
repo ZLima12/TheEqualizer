@@ -3,8 +3,8 @@
 
 
 "@types/node@^8.0.53":
-  version "8.0.53"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.53.tgz#396b35af826fa66aad472c8cb7b8d5e277f4e6d8"
+  version "8.0.55"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.55.tgz#015966c0af809216b8a46cc527b5c211994d36f0"
 
 async-limiter@~1.0.0:
   version "1.0.0"
@@ -48,8 +48,8 @@ safe-buffer@~5.1.0:
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
 snekfetch@^3.3.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/snekfetch/-/snekfetch-3.6.0.tgz#f4f64064168d5b10aff7e9945d6d2932fda1aa54"
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/snekfetch/-/snekfetch-3.6.1.tgz#9b77fa946cfa15c7041940593a2689dc547427ea"
 
 tweetnacl@^1.0.0:
   version "1.0.0"
