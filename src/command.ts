@@ -40,7 +40,6 @@ namespace Command
 	export const SupportedCommands: Array<string> =
 	[
 		"cancel",
-		"destroy",
 		"eval",
 		"help",
 		"list-commands",
