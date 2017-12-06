@@ -68,13 +68,23 @@ export class DiscordPWStatsManager
 
 							() =>
 							{
-								let resObj: object = JSON.parse(dataString);
+								let resObj: object;
+
+								try
+								{
+									resObj = JSON.parse(dataString);
+								}
+
+								catch
+								{
+									reject(new Error("bots.discord.pw sent invalid JSON stats."));
+								}
 
 								if (resObj["error"]) reject(new Error("bots.discord.pw API threw error: " + (resObj["error"] as string)));
 
 								else resolve(resObj as DiscordPWStats);
 							}
-						)
+						);
 					}
 				);
 
@@ -91,7 +101,7 @@ export class DiscordPWStatsManager
 			this.stopAutoPosting();
 		}
 
-		this.autoPostTimer = setInterval(() => this.postStats(), ms);
+		this.autoPostTimer = setInterval(() => this.postStats().catch((e) => console.log("Couldn't post stats: " + e)), ms);
 	}
 
 	public stopAutoPosting(): void
