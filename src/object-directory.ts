@@ -53,7 +53,7 @@ export abstract class ObjectDirectory<T>
 					{ },
 					async (err: NodeJS.ErrnoException, files: Array<string>) =>
 					{
-						if (err) reject(err);
+						if (err) return reject(err);
 
 						for (let file of files)
 						{
@@ -62,7 +62,7 @@ export abstract class ObjectDirectory<T>
 								this.loadedObjects.push(require(filePath));
 						}
 
-						resolve();
+						return resolve();
 					}
 				);
 			}

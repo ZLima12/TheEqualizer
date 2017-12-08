@@ -77,12 +77,12 @@ export class DiscordPWStatsManager
 
 								catch
 								{
-									reject(new Error("bots.discord.pw sent invalid JSON stats."));
+									return reject(new Error("bots.discord.pw sent invalid JSON stats."));
 								}
 
-								if (resObj["error"]) reject(new Error("bots.discord.pw API threw error: " + (resObj["error"] as string)));
+								if (resObj["error"]) return reject(new Error("bots.discord.pw API threw error: " + (resObj["error"] as string)));
 
-								else resolve(resObj as DiscordPWStats);
+								else return resolve(resObj as DiscordPWStats);
 							}
 						);
 					}
