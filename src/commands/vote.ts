@@ -18,9 +18,6 @@ export = new Command
 		{
 			let exitStatus: Command.ExitStatus = Poll.currentPoll.get(message.guild.id).vote(message);
 
-			if (Poll.currentPoll.get(message.guild.id).Concluded)
-				Poll.currentPoll.delete(message.guild.id);
-
 			return exitStatus;
 		}
 	}
