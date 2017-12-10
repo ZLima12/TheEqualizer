@@ -1,4 +1,4 @@
-import Command from "../command";
+import { Command, Invocation} from "../command";
 import * as DiscordJS from "discord.js";
 import Poll from "../poll"
 
@@ -6,25 +6,35 @@ export = new Command
 (
 	"cancel",
 
-	async (message: DiscordJS.Message) =>
+	async (invocation: Invocation) =>
 	{
-		let command: Array<string> = Command.messageToArray(message);
+		const pollInGuild: () => Poll = () =>Poll.currentPoll.get(invocation.Guild.id);
 
-		if (!Poll.currentPoll.get(message.guild.id) || !Poll.currentPoll.get(message.guild.id).underway())
+		if ((invocation.Parameters.length === 1 && invocation.Parameters[0] !== "--force") || (invocation.Parameters.length > 1))
 		{
-			message.reply("There is currently no poll being run.");
-			return Command.ExitStatus.BadInvocation;
+			invocation.Channel.send("🤔 This command shouldn't be used with any options (except --force for admins). I'll ignore the extra options.");
 		}
 
-		if (message.author.id === Poll.currentPoll.get(message.guild.id).Author.id || (message.member.hasPermission("ADMINISTRATOR") && command[1] === "--force"))
+		if (!pollInGuild() || !pollInGuild().underway())
 		{
-			Poll.currentPoll.get(message.guild.id).send("The vote to " + Poll.currentPoll.get(message.guild.id).Description + " has been canceled.");
-			Poll.currentPoll.delete(message.guild.id);
-			return Command.ExitStatus.Success;
+			invocation.Channel.send("There is currently no poll being run.");
+			return;
 		}
 
-		message.reply("No can do. Only " + Poll.currentPoll.get(message.guild.id).Author.user.username + " can cancel the current vote.");
+		else if (invocation.User.id === pollInGuild().Author.id || (invocation.Member.hasPermission("ADMINISTRATOR") && invocation.Parameters.findIndex((value) => value === "--force") !== -1))
+		{
+			pollInGuild().send("The vote to " + pollInGuild().Description + " has been canceled.");
+			Poll.currentPoll.delete(invocation.Guild.id);
+		}
 
-		return Command.ExitStatus.BadInvocation;
+		else if (invocation.Member.hasPermission("ADMINISTRATOR")) // The user also didn't use --force (given previous else if)
+		{
+			invocation.Channel.send("Because you're an admin, you can cancel the current poll if you run `=cancel --force`.");
+		}
+
+		else
+		{
+			invocation.Channel.send("No can do. Only " + pollInGuild().Author.toString() + " or an admin can cancel the current vote.");
+		}
 	}
 );

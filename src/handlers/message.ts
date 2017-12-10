@@ -1,7 +1,7 @@
 import { Handler } from "../event";
 import * as DiscordJS from "discord.js";
 import EqualizerClient from "../client";
-import Command from "../command";
+import { Invocation }  from "../command";
 
 export = new Handler
 (
@@ -16,9 +16,11 @@ export = new Handler
 				message.reply("Sorry, but I can only be used in servers.");
 			}
 
-			else if (message.content.startsWith('='))
+			const invocation: Invocation = Invocation.fromMessage(message);
+
+			if (invocation)
 			{
-				Command.runCommand(message);
+				client.emit("commandInvoked", invocation);
 			}
 		}
 	}

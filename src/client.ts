@@ -2,12 +2,16 @@ import { Client as DJSClient } from "discord.js";
 import Globals from "./globals";
 import { DiscordPWStatsManager } from "./bot-list-stats";
 import { Manager as EventManager } from "./event";
+import { Manager as CommandManager } from "./command";
+import Moderation from "./moderation";
 
 class EqualizerClient extends DJSClient
 {
-	private pwStatsManager: DiscordPWStatsManager;
+	public readonly pwStatsManager: DiscordPWStatsManager;
 
-	private eventManager: EventManager;
+	public readonly eventManager: EventManager;
+
+	public readonly commandManager: CommandManager;
 
 	public constructor()
 	{
@@ -28,9 +32,8 @@ class EqualizerClient extends DJSClient
 			else this.pwStatsManager = null;
 		}
 
+		this.commandManager = new CommandManager("./commands");
 		this.eventManager = new EventManager("./handlers");
-
-		this.eventManager.loadFromDirectory().then(() => this.eventManager.setHandlers(this));
 	}
 
 	/**
@@ -40,6 +43,21 @@ class EqualizerClient extends DJSClient
 	public loginLoop(delay: number = 1000): void
 	{
 		this.login(Globals.Options["auth"]).catch(() => setTimeout(() => this.loginLoop(delay), delay)); // Must use lambda here to capture this
+	}
+
+	public async load(): Promise<void>
+	{
+		const promises: Array<Promise<void>> = new Array<Promise<void>>();
+
+		promises.push(this.commandManager.loadFromDirectory());
+		promises.push(this.eventManager.loadFromDirectory().then(() => this.eventManager.setHandlers(this)));
+
+		Moderation.DoNotDisturb.startCheckTimer(2000);
+
+		for (const promise of promises)
+		{
+			await promise;
+		}
 	}
 }
 

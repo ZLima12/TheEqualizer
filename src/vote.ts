@@ -1,5 +1,4 @@
 import * as DiscordJS from "discord.js";
-import Command from "./command";
 
 class Vote
 {

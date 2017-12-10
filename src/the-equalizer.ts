@@ -1,4 +1,6 @@
 import Globals from "./globals";
-import Load from "./load";
+import EqualizerClient from "./client";
 
-Load().then(() => Globals.ClientInstance.loginLoop());
+Globals.Options = require("../options");
+Globals.ClientInstance = new EqualizerClient();
+Globals.ClientInstance.load().then(() => Globals.ClientInstance.loginLoop());

@@ -1,14 +1,12 @@
-import Command from "../command";
+import { Command, Invocation } from "../command";
 import * as DiscordJS from "discord.js";
 
 export = new Command
 (
 	"ping",
 
-	async (message: DiscordJS.Message) =>
+	async (invocation: Invocation) =>
 	{
-		message.reply("Pong!");
-
-		return Command.ExitStatus.Success;
+		invocation.Channel.send("Pong!");
 	}
 );

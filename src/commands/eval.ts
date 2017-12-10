@@ -1,4 +1,4 @@
-import Command from "../command";
+import { Command, Invocation } from "../command";
 import * as DiscordJS from "discord.js";
 import Globals from "../globals";
 
@@ -6,34 +6,36 @@ export = new Command
 (
 	"eval",
 
-	async (message: DiscordJS.Message) =>
+	async (invocation: Invocation) =>
 	{
-		let command: Array<string> = Command.messageToArray(message);
-		if (message.content.indexOf(' ') == -1)
-			return Command.ExitStatus.BadInvocation;
-
-		if (message.author.id === Globals.Options["ownerID"])
+		if (invocation.User.id === Globals.Options["ownerID"])
 		{
+			if (invocation.Parameters.length === 0)
+			{
+				invocation.Channel.send("😅 I need code to execute...");
+				return;
+			}
+
 			let result;
-			message.channel.startTyping();
+			invocation.Channel.startTyping();
 			try
 			{
-				result = eval(command.slice(1).join(" "));
+				result = eval(invocation.Parameters.join(" "));
 			}
 
 			catch (e)
 			{
-				message.reply("eval() failed! Exception thrown was `" + e + '`');
-				message.channel.stopTyping();
-				return Command.ExitStatus.BadInvokeNoReply;
+				invocation.Channel.send("eval() failed! Exception thrown was `" + e + '`');
+				invocation.Channel.stopTyping();
 			}
-			message.channel.stopTyping();
+			invocation.Channel.stopTyping();
 
-			message.reply("eval() complete. Return value was: `" + result + '`');
-			return Command.ExitStatus.Success;
+			invocation.Channel.send("eval() complete. Return value was: `" + result + '`');
 		}
 
 		else
-			return Command.ExitStatus.BadInvocation;
+		{
+			invocation.Channel.send("You must be the bot owner to use this command!");
+		}
 	}
 );

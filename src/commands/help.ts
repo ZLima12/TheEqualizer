@@ -1,4 +1,4 @@
-import Command from "../command";
+import { Command, Invocation } from "../command";
 import Documentation from "../doc-container";
 import * as DiscordJS from "discord.js";
 
@@ -6,54 +6,99 @@ export = new Command
 (
 	"help",
 
-	async (message: DiscordJS.Message) =>
+	async (invocation: Invocation) =>
 	{
-		let command: Array<string> = Command.messageToArray(message);
-		let commandName: string;
-		let doc: Documentation;
+		const commandManager = invocation.Client.commandManager;
 
-		switch (command.length)
+		switch (invocation.Parameters.length)
 		{
+			case 0:
+			{
+				let response: string = "";
+				response += "**All supported commands:**\n";
+				response += '`' + commandManager.CommandsList + "`\n\n";
+				response += "Run =help (command) to learn about any command.";
+
+				invocation.Channel.send(response);
+
+				return;
+			}
+
 			case 1:
-				Command.loadedCommands.get("list-commands").Action(message);
+			{
+				let commandName: string = invocation.Parameters[0].toLowerCase();
 
-				message.reply("(If you want to learn how to use the `help` command, run `=help help`)");
-				break;
+				if (commandManager.SupportedCommands.indexOf(commandName) === -1)
+				{
+					invocation.Channel.send("There is no `" + commandName + "` command.");
+					return;
+				}
 
-			case 2:
-				commandName = command[1].toLowerCase();
+				let command: Command = commandManager.Commands.get(commandName);
+				let doc: Documentation = command.Documentation;
 
-				if (Command.SupportedCommands.indexOf(commandName) === -1)
-					return Command.ExitStatus.BadInvocation;
+				let response: string = "";
 
-				doc = Command.loadedCommands.get(commandName).Documentation;
-				message.reply("Description of `" + commandName + "`:\n" + doc.Description + "\n\nInvocation of `" + commandName + "`:\n" + doc.Invocation);
+				response += "**Description of `" + commandName + "`:**\n";
+				response += doc.Description + "\n\n";
+				response += "**Invocation of `" + commandName + "`:**\n";
+				response += doc.Invocation;
 
-				break;
+				invocation.Channel.send(response);
 
-			case 3:
-				commandName = command[1].toLowerCase();
+				return;
+			}
+
+			default:	// There must be at least 2 parameters.
+			{
+				let commandName: string = invocation.Parameters[0].toLowerCase();
+
+				if (commandManager.SupportedCommands.indexOf(commandName) === -1)
+				{
+					invocation.Channel.send("There is no `" + commandName + "` command.");
+					return;
+				}
+
 				let resource: string;
 
-				if (Command.SupportedCommands.indexOf(commandName) === -1)
-					return Command.ExitStatus.BadInvocation;
+				switch (invocation.Parameters[1].toLowerCase())
+				{
+					case "description":
+					{
+						resource = "Description";
+						break;
+					}
 
-				if (command[2].toLowerCase() === "description" || command[2].toLowerCase() === "invocation")
-					resource = command[2].toLowerCase();
+					case "invocation":
+					{
+						resource = "Invocation";
+						break;
+					}
 
-				if (resource === undefined)
-					return Command.ExitStatus.BadInvocation;
+					default:
+					{
+						invocation.Channel.send("You can either get the description or invocation for `" + commandName + "`. (Not `" + invocation.Parameters[1] + "`.)");
+						return;
+					}
+				}
 
-				doc = Command.loadedCommands.get(command[1]).Documentation;
-				let isDescription: boolean = resource === "description";
-				message.reply((isDescription ? "Description" : "Invocation") + " of " + commandName + ":\n" + (isDescription ? doc.Description : doc.Invocation));
+				let command: Command = commandManager.Commands.get(commandName);
+				let doc: Documentation = command.Documentation;
+				let response: string = "";
 
-				break;
+				response += "**" + resource + " of `" + commandName + "`:**\n";
+				response += (resource === "Description") ? doc.Description : doc.Invocation;
 
-			default:
-				return Command.ExitStatus.BadInvocation;
+				if (invocation.Parameters.length > 2)
+				{
+					response += "\n\n";
+					response += "(You should only use up to two options with this command; the rest are ignored.)";
+				}
+
+				invocation.Channel.send(response);
+
+				return;
+			}
 		}
-
-		return Command.ExitStatus.Success;
 	}
 );

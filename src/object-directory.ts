@@ -14,7 +14,7 @@ export abstract class ObjectDirectory<T>
 	private readonly loadedObjects: Array<T>;
 
 	/**
-	 * An {@link Array} of all currently loaded objects.
+	 * An Array of all currently loaded objects.
 	 */
 	protected get LoadedObjects(): Array<T>
 	{ return this.loadedObjects.slice(); }
@@ -26,6 +26,14 @@ export abstract class ObjectDirectory<T>
 	 */
 	protected get AllowJson(): boolean
 	{ return this.allowJson; }
+
+	protected loadError: Error;
+
+	/**
+	 * The first error that occurred on the previous attempt to load objects. (undefined if no errors)
+	 */
+	public get LoadError(): Error
+	{ return this.loadError; }
 
 	/**
 	 * @param directory - The directory containing objects. (If relative, relative to object-directory.ts).
@@ -53,13 +61,30 @@ export abstract class ObjectDirectory<T>
 					{ },
 					async (err: NodeJS.ErrnoException, files: Array<string>) =>
 					{
-						if (err) return reject(err);
+						this.loadError = undefined;
+
+						if (err)
+						{
+							this.loadError = err;
+							return reject(err);
+						}
 
 						for (let file of files)
 						{
 							const filePath: string = Path.join(this.Directory, file);
 							if (filePath.endsWith(".js") || (this.AllowJson && filePath.endsWith(".json")))
-								this.loadedObjects.push(require(filePath));
+							{
+								try
+								{
+									this.loadedObjects.push(require(filePath));
+								}
+
+								catch (e)
+								{
+									this.loadError = e;
+									return reject(e);
+								}
+							}
 						}
 
 						return resolve();

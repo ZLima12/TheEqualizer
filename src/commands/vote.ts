@@ -1,4 +1,4 @@
-import Command from "../command";
+import { Command, Invocation } from "../command";
 import * as DiscordJS from "discord.js";
 import Poll from "../poll";
 
@@ -6,19 +6,19 @@ export = new Command
 (
 	"vote",
 
-	async (message: DiscordJS.Message) =>
+	async (invocation: Invocation) =>
 	{
-		if (!Poll.currentPoll.get(message.guild.id) || !Poll.currentPoll.get(message.guild.id).underway())
+		const pollInGuild = () => Poll.currentPoll.get(invocation.Guild.id);
+
+		if (!pollInGuild() || !pollInGuild().underway())
 		{
-			message.reply("There is currently no vote being run.");
-			return Command.ExitStatus.BadInvokeNoReply;
+			invocation.Channel.send("There is currently no poll being run.");
+			return;
 		}
 
 		else
 		{
-			let exitStatus: Command.ExitStatus = Poll.currentPoll.get(message.guild.id).vote(message);
-
-			return exitStatus;
+			pollInGuild().vote(invocation.Message);
 		}
 	}
 );

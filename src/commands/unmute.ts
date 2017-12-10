@@ -1,4 +1,4 @@
-import Command from "../command";
+import { Command, Invocation } from "../command";
 import * as DiscordJS from "discord.js";
 import Poll from "../poll";
 
@@ -6,26 +6,36 @@ export = new Command
 (
 	"unmute",
 
-	async (message: DiscordJS.Message) =>
+	async (invocation: Invocation) =>
 	{
-		if (!Poll.currentPoll.get(message.guild.id))
-		{
-			Poll.currentPoll.set(message.guild.id, Poll.startPoll(message, "unmute", (member: DiscordJS.GuildMember) => member.setMute(false), (2 / 3), true));
+		const pollInGuild = () => Poll.currentPoll.get(invocation.Guild.id);
 
-			if (Poll.currentPoll.get(message.guild.id))
+		if (!pollInGuild())
+		{
+			Poll.currentPoll.set(invocation.Guild.id, Poll.startPoll(invocation.Message, "unmute", (member: DiscordJS.GuildMember) => member.setMute(false), (2 / 3), true));
+
+			if (pollInGuild())
 			{
-				Poll.currentPoll.get(message.guild.id).start();
-				return Command.ExitStatus.Success;
+				pollInGuild().start();
 			}
 
 			else
-				return Command.ExitStatus.BadInvocation;
+			{
+				let response: string = "";
+
+				response += "Bad Invocation. From the documentation:\n\n";
+				response += invocation.Command.Documentation.Invocation;
+
+				invocation.Channel.send(response);
+
+				return;
+			}
 		}
 
 		else
 		{
-			message.reply("There is already a poll underway.");
-			return Command.ExitStatus.BadInvocation;
+			invocation.Channel.send("There is already a poll underway. (Tell " + pollInGuild().Author.toString() + " or an admin to `=cancel` it.)");
+			return;
 		}
 	}
 );

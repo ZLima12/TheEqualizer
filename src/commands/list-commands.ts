@@ -1,17 +1,19 @@
-import Command from "../command";
+import { Command, Invocation } from "../command";
 import * as DiscordJS from "discord.js";
 
 export = new Command
 (
 	"list-commands",
 
-	async (message: DiscordJS.Message) =>
+	async (invocation: Invocation) =>
 	{
-		let commandList: string = "";
-		for (let command of Command.SupportedCommands)
-			commandList += '`' + command + "`\n";
+		const commandManager = invocation.Client.commandManager;
 
-		message.reply("Here is the list of all supported commands:\n" + commandList.trim() + "\nTo learn more about any command, use the `help` command.");
-		return Command.ExitStatus.Success;
+		let response: string = "";
+		response += "**All supported commands:**\n"
+		response += '`' + commandManager.CommandsList + "`\n\n";
+		response += "Run =help (command) to learn about any command.";
+
+		invocation.Channel.send(response);
 	}
 );

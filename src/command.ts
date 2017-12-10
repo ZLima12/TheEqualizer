@@ -1,22 +1,24 @@
 import * as DiscordJS from "discord.js";
-
 import Documentation from "./doc-container";
+import { ObjectDirectory } from "./object-directory";
+import * as Path from "path";
+import EqualizerClient from "./client";
 
-class Command
+export class Command
 {
-	protected action: (message: DiscordJS.Message) => Promise<Command.ExitStatus>;
-	get Action(): (message: DiscordJS.Message) => Promise<Command.ExitStatus>
+	private action: (invocation: Invocation) => void;
+	public get Action(): (invocation: Invocation) => void
 	{ return this.action }
 
-	protected name: string;
-	get Name(): string
+	private name: string;
+	public get Name(): string
 	{ return this.name }
 
-	protected documentation: Documentation;
-	get Documentation(): Documentation
+	private documentation: Documentation;
+	public get Documentation(): Documentation
 	{ return this.documentation }
 
-	constructor(name: string, action: (message: DiscordJS.Message) => Promise<Command.ExitStatus>)
+	public constructor(name: string, action: (invocation: Invocation) => void)
 	{
 		this.action = action;
 		this.name = name;
@@ -25,97 +27,167 @@ class Command
 	}
 }
 
-namespace Command
+export class Manager extends ObjectDirectory<Command>
 {
-	export const enum ExitStatus
-	{
-		Success,
-		Failure,
-		CommandNotFound,
-		BadInvocation,
-		BadInvokeNoReply,
-		NotInVoiceChannel
-	}
+	private readonly loadedCommands: Map<string, Command>;
 
-	export const SupportedCommands: Array<string> =
-	[
-		"cancel",
-		"eval",
-		"help",
-		"list-commands",
-		"mute",
-		"ping",
-		"source",
-		"unmute",
-		"vote",
-		"kick"
-	];
+	public get SupportedCommands(): Array<string>
+	{ return Array.from(this.loadedCommands.keys()); }
 
-	export function messageToArray(message: DiscordJS.Message): Array<string>
+	public get Commands(): Map<string, Command>
+	{ return this.loadedCommands; }
+
+	/**
+	 * Returns a formatted string of all loaded commands, separated by newlines.
+	 */
+	public get CommandsList(): string
 	{
-		let command: Array<string> = new Array<string>();
-		for (let line of message.content.split('\n'))
+		let list: string = "";
+
+		for (let i = 0; i < this.SupportedCommands.length; i++)
 		{
-			if (line.length > 1)
+			list += this.SupportedCommands[i];
+
+			if (i < this.SupportedCommands.length - 1)
 			{
-				for (let word of line.split(" "))
-				{
-					command.push(word);
-				}
+				list += '\n';
 			}
 		}
 
-		command[0] = command[0].substring(1);
-		return command;
+		return list;
 	}
 
-	export let loadedCommands: Map<string, Command> = new Map<string, Command>();
-
-	async function loadCommand(name: string): Promise<void>
+	/**
+	 * @param commandsLocation - directory containing commands (relative to command.ts).
+	 */
+	public constructor(commandsLocation: string = "./commands")
 	{
-		Command.loadedCommands.set(name, require("./commands/" + name));
+		super(Path.join(__dirname, commandsLocation), false)
+		this.loadedCommands = new Map<string, Command>();
 	}
 
-	export async function loadCommands(): Promise<void>
+	public async loadFromDirectory(): Promise<void>
 	{
-		let promises: Array<Promise<void>> = new Array<Promise<void>>();
+		return super.loadFromDirectory().then
+		(
+			() =>
+			{
+				this.loadedCommands.clear();
 
-		for (let command of Command.SupportedCommands)
-		{
-			promises.push(loadCommand(command));
-		}
+				for (const command of this.LoadedObjects)
+				{
+					if (this.loadedCommands.get(command.Name))
+					{
+						this.loadedCommands.clear();
 
-		for (let promise of promises)
-		{
-			await promise;
-		}
+//						this.loadError = new SyntaxError("Multiple commands with the same name (" + command.Name + ") were loaded.");
+//						throw this.loadError;
+					}
+
+					this.loadedCommands.set(command.Name, command);
+				}
+			}
+		);
 	}
 
-	export async function runCommand(message: DiscordJS.Message): Promise<Command.ExitStatus>
+	public async runCommand(invocation: Invocation): Promise<void>
 	{
-		let messageArray: Array<string> = Command.messageToArray(message);
-		let command: Command = Command.loadedCommands.get(messageArray[0]);
-
-		if (command === undefined)
-		{
-			message.reply('`' + messageArray[0] + "` is not a valid command.");
-			return Command.ExitStatus.CommandNotFound;
-		}
-
-		let exitStatus: Command.ExitStatus = await command.Action(message);
-
-		switch (exitStatus)
-		{
-			case Command.ExitStatus.BadInvocation:
-				message.reply("Bad invocation. From the documentation: \n\n" + command.Documentation.Invocation);
-				break;
-			case Command.ExitStatus.NotInVoiceChannel:
-				message.reply("You must be in the voice channel to vote in this poll");
-				break;
-		}
-
-		return exitStatus;
+		return invocation.Command.Action(invocation);
 	}
 }
 
-export default Command;
+export class Invocation
+{
+	private command: Command;
+	public get Command(): Command
+	{ return this.command; }
+
+	private message: DiscordJS.Message;
+	public get Message(): DiscordJS.Message
+	{ return this.message; }
+
+	public get Client(): EqualizerClient
+	{ return (this.Message.client as EqualizerClient); }	// Okay because we never use a plain DiscordJS.Client.
+
+	public get Member(): DiscordJS.GuildMember
+	{ return this.Message.member; }
+
+	public get User(): DiscordJS.User
+	{ return this.Message.author; }
+
+	public get Channel(): DiscordJS.TextChannel
+	{ return (this.Message.channel as DiscordJS.TextChannel); }		// Okay because we checked to make sure this.Guild !== undefined. (can't be DMs)
+
+	public get Guild(): DiscordJS.Guild
+	{ return this.Message.guild; }
+
+	public get Words(): Array<string>
+	{ return splitByWord(this.Message.content); }
+
+	public get Parameters(): Array<string>
+	{
+		const words = this.Words;
+
+		if (words[0].startsWith('='))
+		{
+			return words.slice(1);
+		}
+
+		// Eventually we should check here to see if the bot was tagged.
+
+		else throw new TypeError("Message `" + this.Message.content + "` is not a command invocation.");
+	}
+
+	private constructor(message: DiscordJS.Message, command: Command)
+	{
+		this.message = message;
+		this.command = command;
+	}
+
+	public async run(): Promise<void>
+	{
+		return this.Command.Action(this);
+	}
+
+	public static fromMessage(message: DiscordJS.Message): Invocation
+	{
+		const client: EqualizerClient = (message.client as EqualizerClient);
+		const words: Array<string> = splitByWord(message.content);
+
+		if (words.length === 0) return undefined;
+
+		else if (!message.guild) return undefined;
+
+		else if (words[0].startsWith('='))
+		{
+			const commandName: string = words[0].slice(1);
+			let manager = client.commandManager;
+
+			const command: Command = client.commandManager.Commands.get(commandName);
+
+			if (command) return new Invocation(message, command);
+
+			else return undefined;
+		}
+	}
+}
+
+export function splitByWord(message: DiscordJS.Message | string): Array<string>
+{
+	const sentence = (message instanceof DiscordJS.Message) ? message.content : message;
+
+	let words: Array<string> = new Array<string>();
+
+	for (let line of sentence.split('\n'))
+	{
+		if (line.trim().length > 0)
+		{
+			for (let word of line.split(' '))
+			{
+				if (word.length > 0) words.push(word);
+			}
+		}
+	}
+
+	return words;
+}

@@ -1,5 +1,4 @@
 import * as DiscordJS from "discord.js";
-import Command from "./command";
 import Vote from "./vote";
 import Globals from "./globals";
 
@@ -184,21 +183,21 @@ class Poll
 		}
 	}
 
-	vote(message: DiscordJS.Message): Command.ExitStatus
+	vote(message: DiscordJS.Message): void
 	{
-		let command: Array<string> = message.content.split(' ');
+		let command: Array<string> =  message.content.split(' ');
 		command[0] = command[0].substring(1);
 
 		let voteType = Vote.voteTypeFromString(command[1]);
 
 		if (command.length !== 2 || voteType === undefined)
 		{
-			return Command.ExitStatus.BadInvocation;
+			return; // Bad command syntax
 		}
 
 		if (this.voiceChannel !== null && message.member.voiceChannel !== this.voiceChannel)
 		{
-			return Command.ExitStatus.NotInVoiceChannel;
+			return; // User not in voice channel
 		}
 
 		if (this.votes.get(message.author.id) !== undefined)
@@ -208,7 +207,7 @@ class Poll
 			if (vote.Type === voteType)
 			{
 				message.reply("You have already voted, and your previous vote is the same as the new one.");
-				return Command.ExitStatus.BadInvokeNoReply;
+				return;
 			}
 
 			vote.Type = voteType;
@@ -221,7 +220,7 @@ class Poll
 
 		this.check();
 
-		return Command.ExitStatus.Success;
+		return;
 	}
 }
 
