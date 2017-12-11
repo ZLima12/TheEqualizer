@@ -24,7 +24,7 @@ export abstract class ObjectDirectory<T>
 	/**
 	 * Whether JSON files will be loaded from the directory.
 	 */
-	protected get AllowJson(): boolean
+	public get AllowJson(): boolean
 	{ return this.allowJson; }
 
 	protected loadError: Error;
