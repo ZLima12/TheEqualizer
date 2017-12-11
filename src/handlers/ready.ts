@@ -1,7 +1,6 @@
 import { Handler } from "../event";
 import Globals from "../globals";
 import EqualizerClient from "../client";
-import ConsoleTools from "../console-tools";
 
 export = new Handler
 (
@@ -12,6 +11,6 @@ export = new Handler
 		console.log("Ready!");
 		client.user.setGame(Globals.Options["motd"]);
 
-		ConsoleTools.printJoinURL();
+		client.generateInvite(8).then((link) => console.log("To add this bot to a server, go to " + link));
 	}
 )
