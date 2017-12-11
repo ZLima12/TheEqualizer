@@ -24,7 +24,7 @@ Name | Type | Optional | Default | Description
 `auth` | `string` | No | None | The auth code for the bot.
 `motd` | `string` | Yes | None | The string that is displayed where Discord would normally put the game a user is playing.
 `biasAdmin` | `boolean` | Yes | `false` | If true, votes targeting users with the `Administrator` Discord permission will be invalidated.
-`ownerID` | `string` | Yes | None | The user ID of the bot owner. If not defined, you will not be able to use some commands (eval, destroy, ect.).
+`ownerID` | `string` | Yes | None | The user ID of the bot owner. If not defined, you will not be able to use `eval`.
 `discordPwAuth` | `string` | Yes | None | The auth code for [bots.discord.pw](https://bots.discord.pw). (Only used by official instance of bot to post stats; you shouldn't be using this.)
 
 Your file should look like this:
