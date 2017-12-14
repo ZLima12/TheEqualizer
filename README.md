@@ -1,8 +1,6 @@
 # The Equalizer
 
-### Official Bot Invite Link
-
-https://discordapp.com/oauth2/authorize?=&client_id=276532396998787072&scope=bot&permissions=8
+### [Official Bot Invite Link](https://discordapp.com/oauth2/authorize?=&client_id=276532396998787072&scope=bot&permissions=8)
 
 ### Description
 When you own a Discord server things can get hectic really fast.
