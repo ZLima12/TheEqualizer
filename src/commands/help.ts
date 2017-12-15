@@ -14,10 +14,12 @@ export = new Command
 		{
 			case 0:
 			{
-				let response: string = "";
-				response += "**All supported commands:**\n";
-				response += '`' + commandManager.CommandsList + "`\n\n";
-				response += "Run =help (command) to learn about any command.";
+				const response = new DiscordJS.RichEmbed();
+
+				response.setColor("40e0d0");
+				response.setTitle("All supported commands:");
+				response.setDescription('`' + commandManager.CommandsList + '`');
+				response.setFooter("Run =help (command) to learn about any command.");
 
 				invocation.Channel.send(response);
 
@@ -26,7 +28,7 @@ export = new Command
 
 			case 1:
 			{
-				let commandName: string = invocation.Parameters[0].toLowerCase();
+				const commandName: string = invocation.Parameters[0].toLowerCase();
 
 				if (commandManager.SupportedCommands.indexOf(commandName) === -1)
 				{
@@ -34,15 +36,14 @@ export = new Command
 					return;
 				}
 
-				let command: Command = commandManager.Commands.get(commandName);
-				let doc: Documentation = command.Documentation;
+				const command: Command = commandManager.Commands.get(commandName);
+				const doc: Documentation = command.Documentation;
+				const response = new DiscordJS.RichEmbed();
 
-				let response: string = "";
-
-				response += "**Description of `" + commandName + "`:**\n";
-				response += doc.Description + "\n\n";
-				response += "**Invocation of `" + commandName + "`:**\n";
-				response += doc.Invocation;
+				response.setColor("40e0d0");
+				response.setTitle(`Command: ${ commandName }`);
+				response.addField("Description", doc.Description);
+				response.addField("Invocation", doc.Invocation);
 
 				invocation.Channel.send(response);
 
@@ -51,7 +52,7 @@ export = new Command
 
 			default:	// There must be at least 2 parameters.
 			{
-				let commandName: string = invocation.Parameters[0].toLowerCase();
+				const commandName: string = invocation.Parameters[0].toLowerCase();
 
 				if (commandManager.SupportedCommands.indexOf(commandName) === -1)
 				{
@@ -82,17 +83,17 @@ export = new Command
 					}
 				}
 
-				let command: Command = commandManager.Commands.get(commandName);
-				let doc: Documentation = command.Documentation;
-				let response: string = "";
+				const command: Command = commandManager.Commands.get(commandName);
+				const doc: Documentation = command.Documentation;
+				const response = new DiscordJS.RichEmbed();
 
-				response += "**" + resource + " of `" + commandName + "`:**\n";
-				response += (resource === "Description") ? doc.Description : doc.Invocation;
+				response.setColor("40e0d0");
+				response.setTitle(`Command: ${ commandName }`);
+				response.addField(resource, (resource === "Description") ? doc.Description : doc.Invocation);
 
 				if (invocation.Parameters.length > 2)
 				{
-					response += "\n\n";
-					response += "(You should only use up to two options with this command; the rest are ignored.)";
+					response.setFooter("(You should only use up to two options with this command; the rest are ignored.)");
 				}
 
 				invocation.Channel.send(response);
