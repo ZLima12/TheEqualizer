@@ -192,12 +192,14 @@ class Poll
 
 		if (command.length !== 2 || voteType === undefined)
 		{
-			return; // Bad command syntax
+			message.channel.send("You may either `=vote up`, `=vote down`, or `=vote neutral`.");
+			return;
 		}
 
 		if (this.voiceChannel !== null && message.member.voiceChannel !== this.voiceChannel)
 		{
-			return; // User not in voice channel
+			message.channel.send(`You must be in the voice channel **${ this.VoiceChannel.name }** to participate in this poll.`);
+			return;
 		}
 
 		if (this.votes.get(message.author.id) !== undefined)
