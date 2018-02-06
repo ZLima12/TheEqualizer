@@ -52,7 +52,7 @@ class EqualizerClient extends DJSClient
 		promises.push(this.commandManager.loadFromDirectory());
 		promises.push(this.eventManager.loadFromDirectory().then(() => this.eventManager.setHandlers(this)));
 
-		Moderation.DoNotDisturb.startCheckTimer(2000);
+		Moderation.DoNotDisturb.startCheckTimer(this, 2000);
 
 		for (const promise of promises)
 		{

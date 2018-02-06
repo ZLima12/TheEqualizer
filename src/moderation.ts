@@ -1,5 +1,6 @@
 import * as DiscordJS from "discord.js";
 import Globals from "./globals";
+import EqualizerClient from "./client";
 
 namespace Moderation
 {
@@ -128,20 +129,20 @@ namespace Moderation
 			return movedMembers;
 		}
 
-		export function checkAllGuilds(): void
+		export function checkAllGuilds(client: EqualizerClient): void
 		{
-			DoNotDisturb.moveAllAfkToDnd(Globals.ClientInstance.guilds.array());
+			DoNotDisturb.moveAllAfkToDnd(client.guilds.array());
 			DoNotDisturb.verifyAllPreviousChannelEntries();
 		}
 
-		export function startCheckTimer(frequency: number)
+		export function startCheckTimer(client: EqualizerClient, frequency: number)
 		{
 			if (timerID !== undefined)
 			{
 				clearInterval(timerID);
 			}
 
-			timerID = setInterval(DoNotDisturb.checkAllGuilds, frequency);
+			timerID = setInterval(() => DoNotDisturb.checkAllGuilds(client), frequency);
 		}
 
 		export function stopCheckTimer()
