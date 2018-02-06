@@ -19,7 +19,7 @@ export default class Documentation
 		this.command = commandName;
 	}
 
-	loadSync()
+	public loadSync()
 	{
 			this.description = FS.readFileSync("doc/commands/" + this.command +  "/description.md").toString();
 			this.invocation = FS.readFileSync("doc/commands/" + this.command + "/invocation.md").toString();
