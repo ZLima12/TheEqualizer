@@ -1,6 +1,7 @@
 import { Client as DJSClient } from "discord.js";
 import Globals from "./globals";
 import { DiscordPWStatsManager } from "./bot-list-stats";
+import DBLAPI = require("dblapi.js");
 import { Manager as EventManager } from "./event";
 import { Manager as CommandManager } from "./command";
 import Moderation from "./moderation";
@@ -8,6 +9,7 @@ import Moderation from "./moderation";
 class EqualizerClient extends DJSClient
 {
 	public readonly pwStatsManager: DiscordPWStatsManager;
+	public readonly dblStatsManager: DBLAPI;
 
 	public readonly eventManager: EventManager;
 
@@ -19,7 +21,7 @@ class EqualizerClient extends DJSClient
 
 		// Bot stats setup
 		{
-			let pwAuth: string = Globals.Options["discordPwAuth"];
+			const pwAuth: string = Globals.Options["discordPwAuth"];
 
 			if (pwAuth)
 			{
@@ -30,6 +32,15 @@ class EqualizerClient extends DJSClient
 			}
 
 			else this.pwStatsManager = null;
+
+			const discordBotsAuth: string = Globals.Options["discordBotsAuth"];
+
+			if (discordBotsAuth)
+			{
+				this.dblStatsManager = new DBLAPI(discordBotsAuth, this);
+			}
+
+			else this.dblStatsManager = null;
 		}
 
 		this.commandManager = new CommandManager("./commands");

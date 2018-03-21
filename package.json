@@ -17,6 +17,7 @@
 	],
 	"dependencies": {
 		"@types/node": "^8.0.53",
+		"dblapi.js": "github:ZLima12/dblapi.js#typings-fix",
 		"discord.js": "^11.3.0",
 		"erlpack": "github:discordapp/erlpack",
 		"typescript": "^2.6.2",
