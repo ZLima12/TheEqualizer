@@ -65,10 +65,7 @@ class EqualizerClient extends DJSClient
 
 		Moderation.DoNotDisturb.startCheckTimer(this, 2000);
 
-		for (const promise of promises)
-		{
-			await promise;
-		}
+		await Promise.all(promises);
 	}
 }
 
