@@ -1,6 +1,7 @@
 import * as DiscordJS from "discord.js";
 import Vote from "./vote";
 import Globals from "./globals";
+import { parseMessage } from "./command";
 
 class Poll
 {
@@ -185,12 +186,11 @@ class Poll
 
 	vote(message: DiscordJS.Message): void
 	{
-		let command: Array<string> =  message.content.split(' ');
-		command[0] = command[0].substring(1);
+		const parsedMessage = parseMessage(message);
 
-		let voteType = Vote.voteTypeFromString(command[1]);
+		let voteType = Vote.voteTypeFromString(parsedMessage.parameters[0]);
 
-		if (command.length !== 2 || voteType === undefined)
+		if (parsedMessage.parameters.length !== 1 || voteType === undefined)
 		{
 			message.channel.send("You may either `=vote up`, `=vote down`, or `=vote neutral`.");
 			return;
@@ -240,10 +240,9 @@ namespace Poll
 		minimumUserFraction: number = 0
 	): Poll
 	{
-		let command: Array<string> = message.content.split(' ');
-		command[0] = command[0].substring(1);
+		const parsedMessage = parseMessage(message);
 
-		if (command.length != 2)
+		if (parsedMessage.parameters.length !== 1)
 		{
 			return null;
 		}
@@ -265,13 +264,13 @@ namespace Poll
 
 		for (let member of memberPool)
 		{
-			if ("<@" + member.user.id + '>' === command[1] || "<@!" + member.user.id + '>' === command[1])
+			if (member.toString() === parsedMessage.parameters[0])
 			{
 				target = member;
 
 				if (member.hasPermission("ADMINISTRATOR") && Globals.Options["biasAdmin"])
 				{
-					message.reply("No can do, all praise " + command[1] + '!');
+					message.reply("No can do, all praise " + member.toString() + '!');
 					return null;
 				}
 			}
@@ -279,7 +278,7 @@ namespace Poll
 
 		if (target === null)
 		{
-			message.reply("No user found by " + command[1] + '.');
+			message.reply("No user found by " + parsedMessage.parameters[0] + '.');
 
 			return null;
 		}
@@ -287,7 +286,7 @@ namespace Poll
 		return new Poll
 		(
 			message,
-			desc + ' ' + command[1],
+			desc + ' ' + parsedMessage.parameters[0],
 
 			() => action(target),
 			() => (true),

@@ -125,18 +125,7 @@ export class Invocation
 	{ return splitByWord(this.Message.content); }
 
 	public get Parameters(): Array<string>
-	{
-		const words = this.Words;
-
-		if (words[0].startsWith('='))
-		{
-			return words.slice(1);
-		}
-
-		// Eventually we should check here to see if the bot was tagged.
-
-		else throw new TypeError("Message `" + this.Message.content + "` is not a command invocation.");
-	}
+	{ return parseMessage(this.Message).parameters; }
 
 	private constructor(message: DiscordJS.Message, command: Command)
 	{
@@ -152,23 +141,18 @@ export class Invocation
 	public static fromMessage(message: DiscordJS.Message): Invocation
 	{
 		const client: EqualizerClient = (message.client as EqualizerClient);
-		const words: Array<string> = splitByWord(message.content);
+		const parsedMessage = parseMessage(message);
+		const words = parsedMessage.words;
 
-		if (words.length === 0) return undefined;
+		if (!message.guild || words.length === 0) return undefined;
 
-		else if (!message.guild) return undefined;
+		const manager = client.commandManager;
 
-		else if (words[0].startsWith('='))
-		{
-			const commandName: string = words[0].slice(1);
-			let manager = client.commandManager;
+		const command: Command = manager.Commands.get(parsedMessage.commandName);
 
-			const command: Command = client.commandManager.Commands.get(commandName);
+		if (command) return new Invocation(message, command);
 
-			if (command) return new Invocation(message, command);
-
-			else return undefined;
-		}
+		else return undefined;
 	}
 }
 
@@ -190,4 +174,46 @@ export function splitByWord(message: DiscordJS.Message | string): Array<string>
 	}
 
 	return words;
+}
+
+export interface ParsedMessage
+{
+	commandName?: string;
+	words: Array<string>;
+	parameters?: Array<string>;
+}
+
+export function parseMessage(message: DiscordJS.Message): ParsedMessage
+{
+	const words = splitByWord(message);
+	const parsed: ParsedMessage = { words: words };
+
+	if (words[0].startsWith('='))
+	{
+		parsed.commandName = words[0].slice(1);
+
+		parsed.parameters = words.slice(1);
+	}
+
+	else if (words[0].startsWith(message.guild.me.toString()))
+	{
+		const startMinusTag = words[0].slice(message.guild.me.toString().length);
+
+		if (startMinusTag.length > 0)
+		{
+			parsed.commandName = startMinusTag;
+			const parameters = words.slice();
+			parameters[0] = parameters[0].slice(message.guild.me.toString().length);
+
+			parsed.parameters = parameters;
+		}
+
+		else
+		{
+			parsed.commandName = words[1];
+			parsed.parameters = words.slice(2);
+		}
+	}
+
+	return parsed;
 }
