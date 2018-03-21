@@ -17,4 +17,4 @@ export = new Handler
 			500
 		);
 	}
-)
+);

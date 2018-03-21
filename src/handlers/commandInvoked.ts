@@ -10,4 +10,4 @@ export = new Handler
 	{
 		invocation.run();
 	}
-)
+);

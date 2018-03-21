@@ -13,4 +13,4 @@ export = new Handler
 
 		client.generateInvite(8).then((link) => console.log("To add this bot to a server, go to " + link));
 	}
-)
+);
