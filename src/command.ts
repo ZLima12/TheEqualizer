@@ -188,30 +188,33 @@ export function parseMessage(message: DiscordJS.Message): ParsedMessage
 	const words = splitByWord(message);
 	const parsed: ParsedMessage = { words: words };
 
-	if (words[0].startsWith('='))
+	if (message.content.length > 0)
 	{
-		parsed.commandName = words[0].slice(1);
-
-		parsed.parameters = words.slice(1);
-	}
-
-	else if (words[0].startsWith(message.guild.me.toString()))
-	{
-		const startMinusTag = words[0].slice(message.guild.me.toString().length);
-
-		if (startMinusTag.length > 0)
+		if (words[0].startsWith('='))
 		{
-			parsed.commandName = startMinusTag;
-			const parameters = words.slice();
-			parameters[0] = parameters[0].slice(message.guild.me.toString().length);
+			parsed.commandName = words[0].slice(1);
 
-			parsed.parameters = parameters;
+			parsed.parameters = words.slice(1);
 		}
 
-		else
+		else if (words[0].startsWith(message.guild.me.toString()))
 		{
-			parsed.commandName = words[1];
-			parsed.parameters = words.slice(2);
+			const startMinusTag = words[0].slice(message.guild.me.toString().length);
+
+			if (startMinusTag.length > 0)
+			{
+				parsed.commandName = startMinusTag;
+				const parameters = words.slice();
+				parameters[0] = parameters[0].slice(message.guild.me.toString().length);
+
+				parsed.parameters = parameters;
+			}
+
+			else
+			{
+				parsed.commandName = words[1];
+				parsed.parameters = words.slice(2);
+			}
 		}
 	}
 
