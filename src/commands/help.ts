@@ -1,5 +1,5 @@
 import { Command, Invocation } from "../command";
-import Documentation from "../doc-container";
+import Documentation from "../documentation";
 import * as DiscordJS from "discord.js";
 
 export = new Command
@@ -42,8 +42,8 @@ export = new Command
 
 				response.setColor("40e0d0");
 				response.setTitle(`Command: ${ commandName }`);
-				response.addField("Description", doc.Description);
-				response.addField("Invocation", doc.Invocation);
+				response.addField("Description", doc.description);
+				response.addField("Invocation", doc.invocation);
 
 				invocation.Channel.send(response);
 
@@ -89,7 +89,7 @@ export = new Command
 
 				response.setColor("40e0d0");
 				response.setTitle(`Command: ${ commandName }`);
-				response.addField(resource, (resource === "Description") ? doc.Description : doc.Invocation);
+				response.addField(resource, (resource === "Description") ? doc.description : doc.invocation);
 
 				if (invocation.Parameters.length > 2)
 				{

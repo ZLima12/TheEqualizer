@@ -1,5 +1,5 @@
 import * as DiscordJS from "discord.js";
-import Documentation from "./doc-container";
+import Documentation from "./documentation";
 import { ObjectDirectory } from "./object-directory";
 import * as Path from "path";
 import EqualizerClient from "./client";
@@ -22,8 +22,7 @@ export class Command
 	{
 		this.action = action;
 		this.name = name;
-		this.documentation = new Documentation(this.name);
-		this.documentation.loadSync();
+		this.documentation = Documentation.loadSync(name);
 	}
 }
 

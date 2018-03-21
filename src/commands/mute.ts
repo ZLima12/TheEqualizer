@@ -24,7 +24,7 @@ export = new Command
 				let response: string = "";
 
 				response += "Bad Invocation. From the documentation:\n\n";
-				response += invocation.Command.Documentation.Invocation;
+				response += invocation.Command.Documentation.invocation;
 
 				invocation.Channel.send(response);
 
