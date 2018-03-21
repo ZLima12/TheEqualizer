@@ -9,7 +9,7 @@ export = new Handler
 	(client: EqualizerClient) =>
 	{
 		console.log("Ready!");
-		client.user.setGame(Globals.Options["motd"]);
+		client.user.setActivity(Globals.Options["motd"]);
 
 		client.generateInvite(8).then((link) => console.log("To add this bot to a server, go to " + link));
 	}
