@@ -2,3 +2,4 @@ js/
 node_modules/
 options.json
 .vscode
+package-lock.json
