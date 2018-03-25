@@ -196,7 +196,7 @@ export function parseMessage(message: DiscordJS.Message): ParsedMessage
 			parsed.parameters = words.slice(1);
 		}
 
-		else if (words[0].startsWith(message.guild.me.toString()))
+		else if (message.guild && words[0].startsWith(message.guild.me.toString()))
 		{
 			const startMinusTag = words[0].slice(message.guild.me.toString().length);
 
