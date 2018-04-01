@@ -121,7 +121,7 @@ export class Invocation
 	{ return this.Message.guild; }
 
 	public get Words(): Array<string>
-	{ return splitByWord(this.Message.content); }
+	{ return parseMessage(this.Message).words }
 
 	public get Parameters(): Array<string>
 	{ return parseMessage(this.Message).parameters; }
@@ -180,6 +180,7 @@ export interface ParsedMessage
 	commandName?: string;
 	words: Array<string>;
 	parameters?: Array<string>;
+	invokedViaTag?: boolean;
 }
 
 export function parseMessage(message: DiscordJS.Message): ParsedMessage
@@ -191,28 +192,33 @@ export function parseMessage(message: DiscordJS.Message): ParsedMessage
 	{
 		if (words[0].startsWith('='))
 		{
+			parsed.invokedViaTag = false;
+
 			parsed.commandName = words[0].slice(1);
 
 			parsed.parameters = words.slice(1);
+
+			words[0] = words[0].slice(1);
 		}
 
 		else if (message.guild && words[0].startsWith(message.guild.me.toString()))
 		{
+			parsed.invokedViaTag = true;
+
 			const startMinusTag = words[0].slice(message.guild.me.toString().length);
 
 			if (startMinusTag.length > 0)
 			{
 				parsed.commandName = startMinusTag;
-				const parameters = words.slice();
-				parameters[0] = parameters[0].slice(message.guild.me.toString().length);
-
-				parsed.parameters = parameters;
+				parsed.parameters = words.slice(1);
+				parsed.words[0] = startMinusTag;
 			}
 
 			else
 			{
 				parsed.commandName = words[1];
 				parsed.parameters = words.slice(2);
+				parsed.words = words.slice(1);
 			}
 		}
 	}
