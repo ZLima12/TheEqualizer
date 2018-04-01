@@ -19,7 +19,7 @@ export = new Command
 				response.setColor("40e0d0");
 				response.setTitle("All supported commands:");
 				response.setDescription(commandManager.CommandsList);
-				response.setFooter("Run =help (command) to learn about any command.");
+				response.setFooter("Run =help <command> to learn about a specific command.");
 
 				invocation.Channel.send(response);
 
