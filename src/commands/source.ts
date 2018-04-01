@@ -3,7 +3,13 @@ import * as DiscordJS from "discord.js";
 
 export = new Command
 (
-	"source",
+	{
+		name: "source",
+		aliases:
+		[
+			"repo"
+		]
+	},
 
 	async (invocation: Invocation) =>
 	{

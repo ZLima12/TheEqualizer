@@ -4,6 +4,12 @@ import { ObjectDirectory } from "./object-directory";
 import * as Path from "path";
 import EqualizerClient from "./client";
 
+export interface Identity
+{
+	name: string
+	aliases?: Array<string>
+}
+
 export class Command
 {
 	private action: (invocation: Invocation) => void;
@@ -14,15 +20,30 @@ export class Command
 	public get Name(): string
 	{ return this.name }
 
+	private aliases: Array<string>
+	public get Aliases(): Array<string>
+	{ return Object.assign([], this.aliases); }
+
 	private documentation: Documentation;
 	public get Documentation(): Documentation
 	{ return this.documentation }
 
-	public constructor(name: string, action: (invocation: Invocation) => void)
+	public constructor(identity: string | Identity, action: (invocation: Invocation) => void)
 	{
+		if (typeof identity === "string")
+		{
+			this.name = identity;
+			this.aliases = [];
+		}
+
+		else
+		{
+			this.name = identity.name;
+			this.aliases = identity.aliases || [];
+		}
+
 		this.action = action;
-		this.name = name;
-		this.documentation = Documentation.loadSync(name);
+		this.documentation = Documentation.loadSync(this.name);
 	}
 }
 
@@ -65,6 +86,12 @@ export class Manager extends ObjectDirectory<Command>
 		this.loadedCommands = new Map<string, Command>();
 	}
 
+	public nameIsAlias(commandName: string): boolean
+	{
+		const command = this.Commands.get(commandName);
+		return command.Name !== commandName;
+	}
+
 	public async loadFromDirectory(): Promise<void>
 	{
 		return super.loadFromDirectory().then
@@ -84,6 +111,11 @@ export class Manager extends ObjectDirectory<Command>
 					}
 
 					this.loadedCommands.set(command.Name, command);
+
+					for (const alias of command.Aliases)
+					{
+						this.loadedCommands.set(alias, command);
+					}
 				}
 			}
 		);

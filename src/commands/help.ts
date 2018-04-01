@@ -41,7 +41,10 @@ export = new Command
 				const response = new DiscordJS.RichEmbed();
 
 				response.setColor("40e0d0");
-				response.setTitle(`Command: ${ commandName }`);
+				let title: string = `Command: ${ commandName }`;
+				if (commandManager.nameIsAlias(commandName))
+					title += ` (alias of ${ command.Name })`;
+				response.setTitle(title);
 				response.addField("Description", doc.description);
 				response.addField("Invocation", doc.invocation);
 
@@ -88,7 +91,10 @@ export = new Command
 				const response = new DiscordJS.RichEmbed();
 
 				response.setColor("40e0d0");
-				response.setTitle(`Command: ${ commandName }`);
+				let title: string = `Command: ${ commandName }`;
+				if (commandManager.nameIsAlias(commandName))
+					title += ` (alias of ${ command.Name }`;
+				response.setTitle(title);
 				response.addField(resource, (resource === "Description") ? doc.description : doc.invocation);
 
 				if (invocation.Parameters.length > 2)
