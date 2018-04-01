@@ -102,19 +102,21 @@ export class Manager extends ObjectDirectory<Command>
 
 				for (const command of this.LoadedObjects)
 				{
-					if (this.loadedCommands.get(command.Name))
+					const allNames = [command.Name, ...command.Aliases];
+					for (const name of allNames)
 					{
-						this.loadedCommands.clear();
+						if (this.loadedCommands.get(name))
+						{
+							this.loadedCommands.clear();
 
-//						this.loadError = new SyntaxError("Multiple commands with the same name (" + command.Name + ") were loaded.");
-//						throw this.loadError;
+							this.loadError = new SyntaxError("Multiple commands with the same name or alias (" + command.Name + ") were loaded.");
+							throw this.loadError;
+						}
 					}
 
-					this.loadedCommands.set(command.Name, command);
-
-					for (const alias of command.Aliases)
+					for (const name of allNames)
 					{
-						this.loadedCommands.set(alias, command);
+						this.loadedCommands.set(name, command);
 					}
 				}
 			}
