@@ -8,6 +8,12 @@ export = new Command
 
 	async (invocation: Invocation) =>
 	{
+		if (Array.from(invocation.Member.voiceChannel.members.values()).length <= 1)
+		{
+			invocation.Channel.send("Can't use this command with only one user in the voice channel...");
+			return;
+		}
+
 		const pollInGuild = () => Poll.currentPoll.get(invocation.Guild.id);
 
 		if (!pollInGuild())
