@@ -11,13 +11,19 @@ export abstract class ObjectDirectory<T>
 	public get Directory(): string
 	{ return this.directory; }
 
-	private readonly loadedObjects: Array<T>;
+	private readonly loadedObjects: Map<string, T>;
 
 	/**
 	 * An Array of all currently loaded objects.
 	 */
 	protected get LoadedObjects(): Array<T>
-	{ return this.loadedObjects.slice(); }
+	{ return Array.from(this.loadedObjects.values()).slice(); }
+
+	/**
+	 * A Map from file path to the respective loaded object.
+	 */
+	protected get FilenameObjectMap(): Map<string, T>
+	{ return new Map(this.loadedObjects) }
 
 	private allowJson: boolean;
 
@@ -42,7 +48,7 @@ export abstract class ObjectDirectory<T>
 	public constructor(directory: string, allowJson: boolean = false)
 	{
 		this.directory = (Path.isAbsolute(directory)) ? directory : Path.join(__dirname, directory);
-		this.loadedObjects = new Array<T>();
+		this.loadedObjects = new Map<string, T>();
 		this.allowJson = allowJson;
 	}
 
@@ -76,7 +82,7 @@ export abstract class ObjectDirectory<T>
 							{
 								try
 								{
-									this.loadedObjects.push(require(filePath));
+									this.loadedObjects.set(filePath, require(filePath));
 								}
 
 								catch (e)
