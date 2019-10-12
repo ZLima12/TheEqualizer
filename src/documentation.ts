@@ -1,5 +1,7 @@
 import * as FS from "fs";
 import * as Path from "path";
+import { promisify } from "util"
+const readFile = promisify(FS.readFile);
 
 interface Documentation
 {
@@ -20,27 +22,6 @@ namespace Documentation
 		return { description: description, invocation: invocation, commandName: commandName };
 	}
 
-	function readFilePromise(path: string): Promise<string>
-	{
-		return new Promise<string>
-		(
-			(resolve, reject) =>
-			{
-				FS.readFile
-				(
-					path,
-
-					(err, data) =>
-					{
-						if (err) return reject(err);
-
-						else return resolve(data.toString());
-					}
-				);
-			}
-		);
-	}
-
 	export async function load(commandName: string): Promise<Documentation>
 	{
 		let description: string;
@@ -48,8 +29,8 @@ namespace Documentation
 
 		const promises = new Array<Promise<string | Buffer>>();
 
-		promises.push(readFilePromise(Path.resolve("./doc/commands/", commandName, "description.md")).then((data: string) => description = data));
-		promises.push(readFilePromise(Path.resolve("./doc/commands/", commandName, "invocation.md")).then((data: string) => invocation = data));
+		promises.push(readFile(Path.resolve("./doc/commands/", commandName, "description.md")).then((data: Buffer) => description = data.toString()));
+		promises.push(readFile(Path.resolve("./doc/commands/", commandName, "invocation.md")).then((data: Buffer) => invocation = data.toString()));
 
 		await Promise.all(promises);
 
