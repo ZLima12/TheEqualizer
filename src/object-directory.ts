@@ -17,7 +17,7 @@ export abstract class ObjectDirectory<T>
 	 * An Array of all currently loaded objects.
 	 */
 	protected get LoadedObjects(): Array<T>
-	{ return Array.from(this.loadedObjects.values()).slice(); }
+	{ return Array.from(this.loadedObjects.values()); }
 
 	/**
 	 * A Map from file path to the respective loaded object.
