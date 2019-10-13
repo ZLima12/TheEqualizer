@@ -16,12 +16,12 @@
 		"discord.js"
 	],
 	"dependencies": {
-		"@types/node": "^8.0.53",
+		"@discordjs/uws": "^11.149.1",
+		"@types/node": "^10.14.21",
 		"dblapi.js": "^1.2.1",
-		"discord.js": "^11.3.0",
-		"erlpack": "github:discordapp/erlpack",
-		"typescript": "^2.6.2",
-		"uws": "^9.14.0"
+		"discord.js": "^11.5.1",
+		"erlpack": "hammerandchisel/erlpack",
+		"typescript": "^3.6.4"
 	},
 	"scripts": {
 		"install": "tsc -p tsconfig.release.json",
