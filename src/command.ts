@@ -82,7 +82,7 @@ export class Manager extends ObjectDirectory<Command>
 	 */
 	public constructor(commandsLocation: string = "./commands")
 	{
-		super(Path.join(__dirname, commandsLocation), false)
+		super(Path.join(__dirname, commandsLocation))
 		this.loadedCommands = new Map<string, Command>();
 	}
 

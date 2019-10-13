@@ -25,13 +25,13 @@ export abstract class ObjectDirectory<T>
 	protected get FilenameObjectMap(): Map<string, T>
 	{ return new Map(this.loadedObjects) }
 
-	private allowJson: boolean;
+	private supportedExtensions: Set<string>;
 
 	/**
-	 * Whether JSON files will be loaded from the directory.
+	 * A Set of supported file extensions. Only files with these extensions will be loaded.
 	 */
-	public get AllowJson(): boolean
-	{ return this.allowJson; }
+	public get SupportedExtensions(): Set<string>
+	{ return new Set(this.supportedExtensions); }
 
 	protected loadError: Error;
 
@@ -43,13 +43,13 @@ export abstract class ObjectDirectory<T>
 
 	/**
 	 * @param directory - The directory containing objects. (If relative, relative to object-directory.ts).
-	 * @param allowJson - When true, json files will be loaded.
+	 * @param fileExtensions - Only files with these extensions will be loaded. Must include '.'.
 	 */
-	public constructor(directory: string, allowJson: boolean = false)
+	public constructor(directory: string, fileExtensions: Set<string> = new Set([".js"]))
 	{
 		this.directory = (Path.isAbsolute(directory)) ? directory : Path.join(__dirname, directory);
 		this.loadedObjects = new Map<string, T>();
-		this.allowJson = allowJson;
+		this.supportedExtensions = new Set(fileExtensions);
 	}
 
 	/**
@@ -78,7 +78,9 @@ export abstract class ObjectDirectory<T>
 						for (let file of files)
 						{
 							const filePath: string = Path.join(this.Directory, file);
-							if (filePath.endsWith(".js") || (this.AllowJson && filePath.endsWith(".json")))
+							const extension: string = Path.parse(filePath).ext;
+
+							if (this.supportedExtensions.has(extension))
 							{
 								try
 								{

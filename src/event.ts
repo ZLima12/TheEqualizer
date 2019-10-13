@@ -42,7 +42,7 @@ export class Manager extends ObjectDirectory<Handler | Array<Handler>>
 	 */
 	public constructor(handlersLocation: string)
 	{
-		super(Path.join(__dirname, handlersLocation), false);
+		super(Path.join(__dirname, handlersLocation));
 		this.handlers = new Map<string, Array<Handler>>();
 	}
 
