@@ -94,33 +94,29 @@ export class Manager extends ObjectDirectory<Command>
 
 	public async loadFromDirectory(): Promise<void>
 	{
-		return super.loadAllEntries().then
-		(
-			() =>
+		await super.loadAllEntries();
+
+		this.loadedCommands.clear();
+
+		for (const command of this.LoadedEntries)
+		{
+			const allNames = [command.Name, ...command.Aliases];
+			for (const name of allNames)
 			{
-				this.loadedCommands.clear();
-
-				for (const command of this.LoadedEntries)
+				if (this.loadedCommands.get(name))
 				{
-					const allNames = [command.Name, ...command.Aliases];
-					for (const name of allNames)
-					{
-						if (this.loadedCommands.get(name))
-						{
-							this.loadedCommands.clear();
+					this.loadedCommands.clear();
 
-							this.loadError = new SyntaxError("Multiple commands with the same name or alias (" + command.Name + ") were loaded.");
-							throw this.loadError;
-						}
-					}
-
-					for (const name of allNames)
-					{
-						this.loadedCommands.set(name, command);
-					}
+					this.loadError = new SyntaxError("Multiple commands with the same name or alias (" + command.Name + ") were loaded.");
+					throw this.loadError;
 				}
 			}
-		);
+
+			for (const name of allNames)
+			{
+				this.loadedCommands.set(name, command);
+			}
+		}
 	}
 
 	public async runCommand(invocation: Invocation): Promise<void>
