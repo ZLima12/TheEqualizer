@@ -98,8 +98,20 @@ export abstract class ObjectDirectory<T>
 	 */
 	public async loadFromDirectory(): Promise<void>
 	{
-		return FS.readdir(this.Directory).then(
-			files => this.loadFiles(new Set(files))).catch(
-			e => { this.loadError = e; throw e });
+		return FS.readdir(this.Directory).then
+		(
+			(files: Array<string>) =>
+			{
+				const paths = files.map(file => Path.join(this.Directory, file));
+
+				this.loadFiles(new Set(paths))
+			}
+		).catch(
+			(e) =>
+			{
+				this.loadError = e;
+				throw e;
+			}
+		);
 	}
 }
