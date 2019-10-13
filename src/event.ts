@@ -1,6 +1,6 @@
 import EqualizerClient from "./client";
 import * as Path from "path";
-import ObjectDirectory from "./object-directory";
+import ObjectDirectory from "./filesystem/object-directory";
 
 export class Handler
 {
