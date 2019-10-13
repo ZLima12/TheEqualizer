@@ -1,5 +1,5 @@
 import * as Path from "path";
-import * as FS from "fs";
+import { promises as FS } from "fs";
 
 export abstract class ObjectDirectory<T>
 {
@@ -53,52 +53,53 @@ export abstract class ObjectDirectory<T>
 	}
 
 	/**
+	 * Loads specified files from this.Directory.
+	 * @param files - as {Set} of files to load. Each file must be an absolute path and in this.Directory.
+	 * @throws {RangeError} if a file path is either not absolute or not in this.Directory.
+	 */
+	private async loadFiles(files: Set<string>): Promise<void>
+	{
+		for (const file of files)
+		{
+			if (!Path.isAbsolute(file))
+			{
+				const e = new RangeError(`File ${ file } is not an absolute path.`);
+				this.loadError = e;
+				throw e;
+			}
+
+			const parsed: Path.ParsedPath = Path.parse(file);
+
+			if (parsed.dir !== this.Directory)
+			{
+				const e = new RangeError(`File '${ file }' is not in directory ${ this.Directory }.`);
+				this.loadError = e;
+				throw e;
+			}
+
+			else if (this.supportedExtensions.has(parsed.ext))
+			{
+				try
+				{
+					this.loadedObjects.set(file, require(file));
+				}
+
+				catch (e)
+				{
+					this.loadError = e;
+					throw e;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Loads all objects in this.Directory.
 	 */
 	public async loadFromDirectory(): Promise<void>
 	{
-		return new Promise<void>
-		(
-			(resolve, reject) =>
-			{
-				FS.readdir
-				(
-					this.Directory,
-					{ },
-					async (err: NodeJS.ErrnoException, files: Array<string>) =>
-					{
-						this.loadError = undefined;
-
-						if (err)
-						{
-							this.loadError = err;
-							return reject(err);
-						}
-
-						for (let file of files)
-						{
-							const filePath: string = Path.join(this.Directory, file);
-							const extension: string = Path.parse(filePath).ext;
-
-							if (this.supportedExtensions.has(extension))
-							{
-								try
-								{
-									this.loadedObjects.set(filePath, require(filePath));
-								}
-
-								catch (e)
-								{
-									this.loadError = e;
-									return reject(e);
-								}
-							}
-						}
-
-						return resolve();
-					}
-				);
-			}
-		);
+		return FS.readdir(this.Directory).then(
+			files => this.loadFiles(new Set(files))).catch(
+			e => { this.loadError = e; throw e });
 	}
 }
