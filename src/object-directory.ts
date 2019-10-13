@@ -1,21 +1,8 @@
-import FileDirectory from "./file-directory"
+import LoadableFileDirectory from "./loadable-file-directory"
+import * as Path from "path"
 
-export abstract class ObjectDirectory<T> extends FileDirectory
+export default class ObjectDirectory<T> extends LoadableFileDirectory<T>
 {
-	private readonly loadedObjects: Map<string, T>;
-
-	/**
-	 * An Array of all currently loaded objects.
-	 */
-	protected get LoadedObjects(): Array<T>
-	{ return Array.from(this.loadedObjects.values()); }
-
-	/**
-	 * A Map from file path to the respective loaded object.
-	 */
-	protected get FilenameObjectMap(): Map<string, T>
-	{ return new Map(this.loadedObjects) }
-
 	/**
 	 * @param directory - The directory containing objects. (If relative, relative to object-directory.ts).
 	 * @param fileExtensions - Only files with these extensions will be loaded. Must include '.'.
@@ -23,28 +10,35 @@ export abstract class ObjectDirectory<T> extends FileDirectory
 	public constructor(directory: string, fileExtensions: Set<string> = new Set([".js"]))
 	{
 		super(directory, fileExtensions);
-		this.loadedObjects = new Map<string, T>();
 	}
 
-	/**
-	 * Loads all objects in this.Directory.
-	 */
-	public async loadFromDirectory(): Promise<void>
+	public async loadEntry(file: string): Promise<T>
 	{
 		await this.refreshListing();
 
-		for (const file of this.FilePaths)
-		{
-			try
-			{
-				this.loadedObjects.set(file, require(file));
-			}
+		const path = (Path.isAbsolute(file)) ? file : Path.join(__dirname, file);
+		const parsed: Path.ParsedPath = Path.parse(path);
 
-			catch (e)
-			{
-				this.loadError = e;
-				throw e;
-			}
+		if (parsed.dir !== this.Directory)
+		{
+			const e = new RangeError(`File '${ path }' is not in directory '${ this.Directory }'!`);
+			this.loadError = e;
+			throw e;
 		}
+
+		let obj: T;
+		try
+		{
+			obj = require(path);
+		}
+
+		catch (e)
+		{
+			this.loadError = e;
+			throw e;
+		}
+
+		this.loadedEntryMap.set(path, obj);
+		return obj;
 	}
 }

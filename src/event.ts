@@ -1,6 +1,6 @@
 import EqualizerClient from "./client";
 import * as Path from "path";
-import { ObjectDirectory } from "./object-directory";
+import ObjectDirectory from "./object-directory";
 
 export class Handler
 {
@@ -51,7 +51,7 @@ export class Manager extends ObjectDirectory<Handler | Array<Handler>>
 	 */
 	private mapHandlers(): void
 	{
-		for (const obj of this.LoadedObjects)
+		for (const obj of this.LoadedEntries)
 		{
 			const handlerArr = (obj instanceof Array) ? obj : [obj];
 
@@ -69,7 +69,7 @@ export class Manager extends ObjectDirectory<Handler | Array<Handler>>
 	 */
 	public async loadFromDirectory(): Promise<void>
 	{
-		return super.loadFromDirectory().then(() => this.mapHandlers());
+		return super.loadAllEntries().then(() => this.mapHandlers());
 	}
 
 	/**

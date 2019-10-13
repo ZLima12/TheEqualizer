@@ -1,6 +1,6 @@
 import * as DiscordJS from "discord.js";
 import Documentation from "./documentation";
-import { ObjectDirectory } from "./object-directory";
+import ObjectDirectory from "./object-directory";
 import * as Path from "path";
 import EqualizerClient from "./client";
 
@@ -94,13 +94,13 @@ export class Manager extends ObjectDirectory<Command>
 
 	public async loadFromDirectory(): Promise<void>
 	{
-		return super.loadFromDirectory().then
+		return super.loadAllEntries().then
 		(
 			() =>
 			{
 				this.loadedCommands.clear();
 
-				for (const command of this.LoadedObjects)
+				for (const command of this.LoadedEntries)
 				{
 					const allNames = [command.Name, ...command.Aliases];
 					for (const name of allNames)
