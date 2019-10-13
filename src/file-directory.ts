@@ -36,7 +36,7 @@ export default abstract class FileDirectory
 	{ return this.loadError; }
 
 	/**
-	 * @param directory - The directory containing objects. (If relative, relative to file-directory.ts).
+	 * @param directory - The directory containing files. (If relative, relative to file-directory.ts).
 	 * @param fileExtensions - Only files with these extensions will be loaded. Must include '.'.
 	 */
 	public constructor(directory: string, fileExtensions: Set<string>)
