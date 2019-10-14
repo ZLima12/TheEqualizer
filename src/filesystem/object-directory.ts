@@ -1,5 +1,4 @@
 import LoadableFileDirectory from "./loadable-file-directory"
-import * as Path from "path"
 
 export default class ObjectDirectory<T> extends LoadableFileDirectory<T>
 {
@@ -16,15 +15,14 @@ export default class ObjectDirectory<T> extends LoadableFileDirectory<T>
 	{
 		await this.refreshListing();
 
-		const path = (Path.isAbsolute(file)) ? file : Path.join(__dirname, file);
-		const parsed: Path.ParsedPath = Path.parse(path);
-
-		if (parsed.dir !== this.Directory)
+		const e = this.fileLocationError(file);
+		if (e)
 		{
-			const e = new RangeError(`File '${ path }' is not in directory '${ this.Directory }'!`);
 			this.loadError = e;
 			throw e;
 		}
+
+		const path = this.resolve(file);
 
 		let obj: T;
 		try

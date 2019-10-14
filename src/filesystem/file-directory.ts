@@ -42,6 +42,7 @@ export default abstract class FileDirectory
 	public constructor(directory: string, fileExtensions: Set<string>)
 	{
 		this.directory = (Path.isAbsolute(directory)) ? directory : Path.join(__dirname, directory);
+		this.directory = Path.resolve(this.directory); // Will remove trailing seperators if any.
 		this.filePaths = new Set();
 		this.supportedExtensions = new Set(fileExtensions);
 	}
@@ -72,5 +73,38 @@ export default abstract class FileDirectory
 		const paths = supportedFiles.map(file => Path.join(this.Directory, file.name));
 
 		this.filePaths = new Set(paths);
+	}
+
+	/**
+	 * Behaves identically to Path.resolve except relative paths are resolved relative to this.Directory.
+	 * @param file - The file path to resolve
+	 */
+	public resolve(file: string): string
+	{
+		let path = Path.isAbsolute(file) ? file : Path.join(this.Directory, file);
+		return Path.resolve(path);
+	}
+
+	/**
+	 * Checks to see if a file path is in this.Directory. If it is, also check if it exists.
+	 * @param file - a file path to check. If relative, it will be relative to this.Directory.
+	 * @returns {Error} if there is a problem with the provided file path. Otherwise returns {null}.
+	 */
+	public fileLocationError(file: string): Error | null
+	{
+		const path = this.resolve(file);
+		const parsed = Path.parse(path);
+
+		if (parsed.dir !== this.Directory)
+		{
+			return new RangeError(`File '${ path }' is not in directory '${ this.Directory }'.`);
+		}
+
+		if (!this.FilePaths.has(path))
+		{
+			return new RangeError(`File '${ path }' does not exist, is not a file, or could not be accessed.`);
+		}
+
+		return null;
 	}
 }
