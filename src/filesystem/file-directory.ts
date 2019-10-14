@@ -27,13 +27,13 @@ export default abstract class FileDirectory
 	public get SupportedExtensions(): Set<string>
 	{ return new Set(this.supportedExtensions); }
 
-	protected loadError: Error;
+	protected loadErrorMap: Map<string, Error>
 
 	/**
 	 * The first error that occurred on the previous attempt to load objects. (undefined if no errors)
 	 */
-	public get LoadError(): Error
-	{ return this.loadError; }
+	public get LoadErrorMap(): Map<string, Error>
+	{ return new Map(this.loadErrorMap); }
 
 	/**
 	 * @param directory - The directory containing files. (If relative, relative to file-directory.ts).
@@ -45,6 +45,7 @@ export default abstract class FileDirectory
 		this.directory = Path.resolve(this.directory); // Will remove trailing seperators if any.
 		this.filePaths = new Set();
 		this.supportedExtensions = new Set(fileExtensions);
+		this.loadErrorMap = new Map();
 	}
 
 	/**
@@ -52,6 +53,8 @@ export default abstract class FileDirectory
 	 */
 	public async refreshListing(): Promise<void>
 	{
+		this.loadErrorMap.clear();
+
 		let entries: Array<FS.Dirent>;
 
 		try
@@ -61,7 +64,7 @@ export default abstract class FileDirectory
 
 		catch (e)
 		{
-			this.loadError = e;
+			this.loadErrorMap.set(this.Directory, e);
 			throw e;
 		}
 

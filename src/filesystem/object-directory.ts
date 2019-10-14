@@ -15,14 +15,13 @@ export default class ObjectDirectory<T> extends LoadableFileDirectory<T>
 	{
 		await this.refreshListing();
 
-		const e = this.fileLocationError(file);
+		const path = this.resolve(file);
+		const e = this.fileLocationError(path);
 		if (e)
 		{
-			this.loadError = e;
+			this.loadErrorMap.set(path, e)
 			throw e;
 		}
-
-		const path = this.resolve(file);
 
 		let obj: T;
 		try
@@ -32,7 +31,7 @@ export default class ObjectDirectory<T> extends LoadableFileDirectory<T>
 
 		catch (e)
 		{
-			this.loadError = e;
+			this.loadErrorMap.set(path, e);
 			throw e;
 		}
 

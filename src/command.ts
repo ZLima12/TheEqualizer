@@ -98,7 +98,7 @@ export class Manager extends ObjectDirectory<Command>
 
 		this.loadedCommands.clear();
 
-		for (const command of this.LoadedEntries)
+		for (const [path, command] of this.LoadedEntryMap.entries())
 		{
 			const allNames = [command.Name, ...command.Aliases];
 			for (const name of allNames)
@@ -107,8 +107,9 @@ export class Manager extends ObjectDirectory<Command>
 				{
 					this.loadedCommands.clear();
 
-					this.loadError = new SyntaxError("Multiple commands with the same name or alias (" + command.Name + ") were loaded.");
-					throw this.loadError;
+					const e = new Error("Multiple commands with the same name or alias (" + command.Name + ") were loaded.");
+					this.loadErrorMap.set(path, e);
+					throw e;
 				}
 			}
 

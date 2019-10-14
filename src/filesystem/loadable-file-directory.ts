@@ -30,7 +30,7 @@ export default abstract class LoadableFileDirectory<T> extends FileDirectory
 	 * Loads a file from disk. This file is cached in this.LoadedEntryMap.
 	 * @param file - The file to load. If relative, relative to this.Directory. Otherwise must be in this.Directory.
 	 * @returns {T}, which is the loaded file.
-	 * @throws {RangeError} if either the file can not be loaded or is not in this.Directory.
+	 * @throws {Error} if either the file can not be loaded or is not in this.Directory. This error will also be added to this.loadErrorMap.
 	 */
 	public abstract async loadEntry(file: string): Promise<T>;
 
@@ -41,10 +41,10 @@ export default abstract class LoadableFileDirectory<T> extends FileDirectory
 	{
 		await this.refreshListing();
 
-		const promises = new Array<Promise<T>>();
+		const promises = new Array<Promise<any>>();
 		for (const file of this.FilePaths)
 		{
-			promises.push(this.loadEntry(file));
+			promises.push(this.loadEntry(file).catch(() => { }));
 		}
 
 		return Promise.all(promises).then(() => { }); // Make type Promise<void>
