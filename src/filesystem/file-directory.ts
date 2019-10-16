@@ -1,7 +1,7 @@
 import * as FS from "fs"
 import * as Path from "path"
 
-export default abstract class FileDirectory
+export default class FileDirectory
 {
 	private readonly directory: string;
 
