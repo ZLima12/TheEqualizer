@@ -12,6 +12,19 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.21.tgz#4a9db7ef1d1671c0015e632c5fa3d46c86c58c1e"
   integrity sha512-nuFlRdBiqbF+PJIEVxm2jLFcQWN7q7iWEJGsBV4n7v1dbI9qXB8im2pMMKMCUZe092sQb5SQft2DHfuQGK5hqQ==
 
+"@types/node@^12.11.1":
+  version "12.11.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.11.1.tgz#1fd7b821f798b7fa29f667a1be8f3442bb8922a3"
+  integrity sha512-TJtwsqZ39pqcljJpajeoofYRfeZ7/I/OMUQ5pR4q5wOKf2ocrUvBAZUMhWsOvKx3dVc/aaV5GluBivt0sWqA5A==
+
+"@zlima12/file-directories@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@zlima12/file-directories/-/file-directories-1.0.2.tgz#72004513ed4d8796b3ac6ac03758e3cc3eb144a7"
+  integrity sha512-ua8QWF/1Pn0lW+VnyKK59I/3vTJMjwAg7Tt5rXleAMnGtf2ZuUPA4TT2G80mv3BTkTOd9EFjKsIXXbVY+RyjwA==
+  dependencies:
+    "@types/node" "^12.11.1"
+    typescript "^3.6.4"
+
 async-limiter@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"

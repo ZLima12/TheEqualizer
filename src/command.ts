@@ -1,6 +1,6 @@
 import * as DiscordJS from "discord.js";
 import Documentation from "./documentation";
-import ObjectDirectory from "./filesystem/object-directory";
+import { ObjectDirectory } from "@zlima12/file-directories";
 import * as Path from "path";
 import EqualizerClient from "./client";
 
