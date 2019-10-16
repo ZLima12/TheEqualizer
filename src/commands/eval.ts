@@ -18,19 +18,25 @@ export = new Command
 
 			let result;
 			invocation.Channel.startTyping();
+
+			await new Promise(resolve => setTimeout(resolve, 100)); // Allow time for Discord to update typing staus.
+
 			try
 			{
 				result = eval(invocation.Parameters.join(" "));
+
+				invocation.Channel.send("eval() complete. Return value was: `" + result + '`');
 			}
 
 			catch (e)
 			{
 				invocation.Channel.send("eval() failed! Exception thrown was `" + e + '`');
-				invocation.Channel.stopTyping();
 			}
-			invocation.Channel.stopTyping();
 
-			invocation.Channel.send("eval() complete. Return value was: `" + result + '`');
+			finally
+			{
+				setTimeout(() => invocation.Channel.stopTyping(), 100); // Once again, give Discord some time to update typing status.
+			}
 		}
 
 		else
