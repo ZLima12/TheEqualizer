@@ -1,6 +1,6 @@
 import EqualizerClient from "./client";
 import * as Path from "path";
-import { ObjectDirectory } from "@zlima12/file-directories";
+import { ObjectDirectory } from "@zlima12/directoryz";
 
 export class Handler
 {

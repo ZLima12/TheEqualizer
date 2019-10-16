@@ -17,10 +17,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.11.1.tgz#1fd7b821f798b7fa29f667a1be8f3442bb8922a3"
   integrity sha512-TJtwsqZ39pqcljJpajeoofYRfeZ7/I/OMUQ5pR4q5wOKf2ocrUvBAZUMhWsOvKx3dVc/aaV5GluBivt0sWqA5A==
 
-"@zlima12/file-directories@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@zlima12/file-directories/-/file-directories-1.0.3.tgz#5417944099ce97a4c31a360d676d04479ed42efe"
-  integrity sha512-AiS77+np4f5iO/49+azv1RqSFurbdrhDgvKdnKDjyGjdP5VCfCvKCDDGus6vGeQHe7B5ulF2rQqeC55W2j/VuA==
+"@zlima12/directoryz@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@zlima12/directoryz/-/directoryz-1.0.0.tgz#bef4ec1ba081ebda5a4e4b59bad4fe7b5626c7d8"
+  integrity sha512-WwoyxFAy4zPW+xXoKtjI3gDxwEKS6m1+T+6TXUvvTAns02iiWtZfJHl/PUROVCqTADVcj3UKwFDLa8ndCNP2oQ==
   dependencies:
     "@types/node" "^12.11.1"
     typescript "^3.6.4"

@@ -18,7 +18,7 @@
 	"dependencies": {
 		"@discordjs/uws": "^11.149.1",
 		"@types/node": "^10.14.21",
-		"@zlima12/file-directories": "^1.0.3",
+		"@zlima12/directoryz": "^1.0.0",
 		"dblapi.js": "^1.2.1",
 		"discord.js": "^11.5.1",
 		"erlpack": "hammerandchisel/erlpack",
